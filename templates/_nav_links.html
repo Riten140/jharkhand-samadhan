@@ -7,8 +7,6 @@
   {% elif current_user.role == 'admin' %}
   <a class="{{ 'active' if active=='dashboard' }}" href="{{ url_for('admin_dashboard') }}">{{ t('nav_overview') }}</a>
   {% endif %}
-  <span class="who">{{ current_user.name }} · {{ current_user.role|capitalize }}</span>
-  <a class="nav-btn nav-btn-ghost" href="{{ url_for('logout') }}">{{ t('nav_logout') }}</a>
 {% else %}
   <a href="{{ url_for('register') }}">{{ t('nav_register') }}</a>
   <a class="nav-btn nav-btn-primary" href="{{ url_for('login') }}">{{ t('btn_login') }}</a>
