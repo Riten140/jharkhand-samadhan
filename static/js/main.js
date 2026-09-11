@@ -4,6 +4,30 @@ document.addEventListener("DOMContentLoaded", function () {
     img.onerror = function () { img.style.display = "none"; };
   });
 
+  // Side-drawer hamburger menu
+  (function () {
+    var toggle = document.querySelector("[data-menu-toggle]");
+    var drawer = document.querySelector("[data-menu-drawer]");
+    var overlay = document.querySelector("[data-menu-overlay]");
+    if (!toggle || !drawer || !overlay) return;
+    function setOpen(open) {
+      drawer.classList.toggle("open", open);
+      overlay.classList.toggle("open", open);
+      toggle.setAttribute("aria-expanded", open ? "true" : "false");
+      document.body.style.overflow = open ? "hidden" : "";
+    }
+    toggle.addEventListener("click", function () {
+      setOpen(!drawer.classList.contains("open"));
+    });
+    overlay.addEventListener("click", function () { setOpen(false); });
+    document.querySelectorAll("[data-menu-close]").forEach(function (btn) {
+      btn.addEventListener("click", function () { setOpen(false); });
+    });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") setOpen(false);
+    });
+  })();
+
   document.querySelectorAll("[data-erase-title]").forEach(function (title) {
     var english = title.dataset.titleEn;
     var hindi = title.dataset.titleHi;

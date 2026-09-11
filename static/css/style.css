@@ -57,6 +57,10 @@ p{ margin:0 0 1em 0; max-width:62ch; }
 .nav-btn-ghost{ border:1px solid rgba(255,255,255,.4); color:#E7EDE7 !important; }
 .nav-btn-ghost:hover{ background:rgba(255,255,255,.12); color:#fff !important; }
 
+/* ---------- hamburger + side drawer (mobile navigation) ---------- */
+.hamburger{ display:none; }
+.drawer, .drawer-overlay{ display:none; }
+
 /* ---------- buttons ---------- */
 .btn{ display:inline-flex; align-items:center; gap:8px; padding:11px 22px; border-radius:var(--radius-s); font-family:var(--font-head); font-weight:600; font-size:.9rem; border:1px solid transparent; cursor:pointer; transition:all .15s ease; }
 .btn-primary{ background:var(--amber); color:#fff; }
@@ -229,11 +233,43 @@ tr.row-link:hover{ background:#FBF9F3; cursor:pointer; }
    MOBILE OPTIMIZATION
    ===================================================== */
 
-/* Tablet & below */
+/* Tablet & below — swap the desktop nav for a hamburger + side drawer */
 @media (max-width:860px){
   .topnav{ padding:14px 20px; }
   .page{ padding:26px 18px 56px; }
   .role-grid{ gap:12px; }
+
+  .main-nav{ display:none; }          /* top-row nav hidden on tablets/phones */
+  .hamburger{ display:inline-flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:4px; width:42px; height:42px; border:1px solid rgba(255,255,255,.35);
+    background:rgba(255,255,255,.08); border-radius:10px; cursor:pointer; flex-shrink:0; }
+  .hamburger-line{ display:block; width:18px; height:2px; border-radius:2px; background:#fff; }
+
+  .drawer, .drawer-overlay{ display:block; }
+  .drawer-overlay{ position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:60;
+    opacity:0; visibility:hidden; transition:opacity .25s ease, visibility .25s; }
+  .drawer-overlay.open{ opacity:1; visibility:visible; }
+
+  .drawer{ position:fixed; top:0; right:0; bottom:0; width:min(320px,84vw);
+    background:var(--forest-deep); color:#fff; z-index:70; padding:18px 20px 28px;
+    transform:translateX(105%); transition:transform .28s ease; overflow-y:auto;
+    box-shadow:-8px 0 24px rgba(0,0,0,.32); }
+  .drawer.open{ transform:translateX(0); }
+  .drawer-head{ display:flex; align-items:center; justify-content:space-between;
+    border-bottom:1px solid rgba(255,255,255,.14); padding-bottom:12px; }
+  .drawer-head strong{ font-family:var(--font-head); font-size:.95rem; }
+  .drawer-x{ border:0; background:transparent; color:#fff; font-size:1.3rem; cursor:pointer; padding:2px 6px; }
+  .drawer-x:hover{ color:var(--amber); }
+  .drawer-nav{ display:flex; flex-direction:column; gap:2px; padding-top:14px; }
+  .drawer-nav a{ color:#E7EDE7; font-size:.95rem; padding:11px 6px;
+    border-bottom:1px solid rgba(255,255,255,.08); }
+  .drawer-nav a.active{ color:#fff; font-weight:600; }
+  .drawer-nav a:hover{ color:#fff; }
+  .drawer-nav .who{ margin:12px 0 6px; align-self:flex-start; }
+  .drawer-nav .nav-btn{ margin-top:8px; justify-content:center; }
+  .drawer-lang{ margin-top:22px; }
+  .drawer-lang-label{ font-size:.78rem; color:#C9D8CD; margin-bottom:6px; }
+  .drawer-lang .lang-switch select{ width:100%; max-width:100%; }
 }
 
 /* Phones */
