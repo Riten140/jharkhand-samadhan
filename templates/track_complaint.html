@@ -66,6 +66,29 @@
   {% endif %}
 </div>
 
+{% if c.ai_data %}
+<div class="card" style="margin-bottom:24px;">
+  <div class="id">{{ t('ai_verification_panel') }}</div>
+  <div class="ai-meter"><div class="ai-meter-fill" style="width:{{ c.ai_data.confidence }}%"></div></div>
+  <p style="margin:8px 0 12px;">
+    <strong>{{ c.ai_data.confidence }}%</strong> —
+    {% if c.ai_data.verified %}{{ t('ai_match') }}{% else %}{{ t('ai_mismatch') }}{% endif %}
+  </p>
+  {% if c.ai_data.signals %}
+  <div class="id" style="margin-bottom:8px;">{{ t('ai_signals') }}</div>
+  <ul class="ai-signals">
+    {% for s in c.ai_data.signals %}<li>{{ s }}</li>{% endfor %}
+  </ul>
+  {% endif %}
+  {% if c.ai_data.warnings %}
+  <div class="id" style="margin-bottom:8px;">{{ t('ai_warnings') }}</div>
+  <ul class="ai-signals ai-warnings">
+    {% for w in c.ai_data.warnings %}<li>⚠️ {{ w }}</li>{% endfor %}
+  </ul>
+  {% endif %}
+</div>
+{% endif %}
+
 {% if c.resolution_note %}
 <div class="card" style="margin-bottom:24px; background:var(--sal-light); border:none;">
   <strong>{{ t('ai_resolution_check') }}</strong>

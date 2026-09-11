@@ -2,11 +2,13 @@
 Jharkhand Samadhan — Complaint Verification Platform (v2)
 
 Three real logins: Citizen, Officer, Admin. Citizens file a complaint with a
-photo/video. Road & infrastructure complaints get an automatic simulated
-satellite screening; everything else goes straight to an officer for manual
-verification. Once an officer accepts a case they get a resolution deadline.
-When they upload an "after" photo, a real before/after image comparison
-(Pillow) decides whether the case auto-closes or reopens.
+photo/video. An AI engine (pure Pillow, offline) cross-checks the upload against
+the stated problem and verifies whether the reported issue is visible; high
+confidence auto-verifies the complaint, low confidence routes it to an officer
+for manual verification instead of blocking the citizen. Once an officer
+accepts a case they get a resolution deadline. When they upload an "after"
+photo, a real before/after image comparison (Pillow) decides whether the case
+auto-closes or reopens.
 
 Only two third-party packages are needed: Flask and Pillow. Auth is handled
 with Flask's own signed session cookies (no Flask-Login) and persistence is
@@ -41,6 +43,7 @@ IMAGE_LOCATION_TOLERANCE_METERS = 5000
 app = Flask(__name__)
 app.secret_key = "jsamadhan-dev-secret-change-me"
 app.config["MAX_CONTENT_LENGTH"] = 25 * 1024 * 1024  # 25 MB uploads
+app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=30)
 
 db.init_db()
 
@@ -211,6 +214,7 @@ def register():
             return render_template("register.html")
 
         user_id = db.create_user(conn, name, email, phone, password, "citizen")
+        session.permanent = True
         session["user_id"] = user_id
         flash(f"Welcome, {name}! Your citizen account is ready.", "success")
         return redirect(url_for("citizen_dashboard"))
@@ -235,6 +239,7 @@ def login(role=None):
         user = db.get_user_by_email_role(conn, email, role)
 
         if user and db.verify_password(user, password):
+            session.permanent = True
             session["user_id"] = user["id"]
             flash(f"Welcome back, {user['name']}.", "success")
             return redirect(url_for(f"{role}_dashboard"))
@@ -346,16 +351,22 @@ def report_problem():
         db.add_log(conn, complaint_id, "Submitted",
                     f"Filed by {g.current_user.name} ({g.current_user.phone}, {g.current_user.email}).")
 
-        # --- automatic AI screening ---
-        if category in db.INFRA_CATEGORIES:
-            confidence, note = ai_engine.satellite_screen(code, category, description)
-            new_status = "AI Verified" if confidence >= ai_engine.SATELLITE_VERIFY_THRESHOLD else "Pending Officer Review"
-            db.set_status(conn, complaint_id, new_status, note,
-                          extra_fields={"ai_confidence": confidence, "ai_note": note})
+        # --- automatic AI screening: photo vs the reported problem ---
+        if not is_video:
+            photo_path = os.path.join(UPLOAD_DIR, filename)
+            verdict = ai_engine.verify_image_against_problem(photo_path, title, description, category)
+            new_status = "AI Verified" if verdict["verified"] else "Pending Officer Review"
+            db.set_status(conn, complaint_id, new_status, verdict["note"],
+                          extra_fields={
+                              "ai_confidence": verdict["confidence"],
+                              "ai_note": verdict["note"],
+                              "ai_detail": json.dumps(verdict, ensure_ascii=False),
+                          })
         else:
-            note = ("Automated satellite screening only applies to road & infrastructure reports. "
-                     "Routed for officer verification.")
-            db.set_status(conn, complaint_id, "Pending Officer Review", note, extra_fields={"ai_note": note})
+            note = ("Video evidence was submitted. Automated image verification cannot "
+                     "inspect videos, so this was routed for officer verification.")
+            db.set_status(conn, complaint_id, "Pending Officer Review", note,
+                          extra_fields={"ai_note": note})
 
         flash(f"Problem submitted as #{code}.", "success")
         return redirect(url_for("track_complaint", code=code))

@@ -7,6 +7,7 @@ dot-attribute access (c.status, c.citizen.name, c.deadline.strftime(...)),
 with computed fields like is_overdue attached in Python.
 """
 
+import json
 import os
 import random
 import sqlite3
@@ -70,6 +71,7 @@ CREATE TABLE IF NOT EXISTS complaints (
     status TEXT NOT NULL DEFAULT 'Submitted',
     ai_confidence INTEGER,
     ai_note TEXT,
+    ai_detail TEXT,
     accepted_at TEXT,
     deadline TEXT,
     resolution_filename TEXT,
@@ -120,6 +122,7 @@ def init_db():
         ("image_latitude", "REAL"), ("image_longitude", "REAL"),
         ("location_address", "TEXT"), ("location_city", "TEXT"),
         ("location_state", "TEXT"), ("pincode", "TEXT"),
+        ("ai_detail", "TEXT"),
     ):
         if column not in complaint_columns:
             conn.execute(f"ALTER TABLE complaints ADD COLUMN {column} {column_type}")
@@ -168,6 +171,12 @@ def hydrate_complaint(conn, row, with_relations=True):
     ns.is_infra = d["category"] in INFRA_CATEGORIES
     ns.is_overdue = bool(ns.deadline) and ns.status == "Accepted by Officer" and _now() > ns.deadline
     ns.days_left = (ns.deadline - _now()).days if ns.deadline else None
+    ns.ai_data = None
+    if d.get("ai_detail"):
+        try:
+            ns.ai_data = json.loads(d["ai_detail"])
+        except (TypeError, ValueError):
+            ns.ai_data = None
 
     if with_relations:
         ns.citizen = hydrate_user(get_user_by_id(conn, d["citizen_id"]))

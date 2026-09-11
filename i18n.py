@@ -79,7 +79,7 @@ TR = {
     "nav_back_home": "← Back to Home",
 
     "hero_title": "Report it. Track it. See it fixed.",
-    "hero_body": "Citizens report local problems with photo or video evidence. Road and infrastructure reports are automatically screened against recent satellite imagery; everything else is verified by an officer. Once accepted, officers must resolve the case within a set deadline — and a before/after image check decides whether it's really fixed before the case closes.",
+    "hero_body": "Citizens report local problems with photo or video evidence. An AI engine cross-checks each uploaded photo against the reported problem and verifies whether the issue is really there; everything is then confirmed by an officer. Once accepted, officers must resolve the case within a set deadline — and a before/after image check decides whether it's really fixed before the case closes.",
     "stat_reported": "Problems Reported",
     "stat_open": "Currently Open",
     "stat_resolved": "Resolved & Verified",
@@ -122,7 +122,7 @@ TR = {
     "describe_problem": "Describe the Problem",
     "describe_problem_ph": "What is happening, and how is it affecting people?",
     "category": "Category",
-    "category_hint": "\"Roads & Infrastructure\" reports get an automatic satellite AI check.",
+    "category_hint": "The AI will cross-check your photo against the problem you describe below.",
     "district": "District",
     "location_details": "Location details",
     "location_ph": "Village / ward / landmark",
@@ -131,7 +131,7 @@ TR = {
     "evidence_hint": "JPG, PNG, WEBP, or MP4/MOV — required for verification",
     "btn_submit_problem": "Submit Problem",
 
-    "banner_ai_verified": "🤖 Verified by automated satellite screening ({conf}% confidence). Awaiting officer to begin resolution.",
+    "banner_ai_verified": "🤖 Your photo matches the reported problem — verified by AI ({conf}% confidence). Awaiting officer to begin resolution.",
     "banner_pending_officer": "🕵️ Awaiting manual verification by a field officer.",
     "banner_overdue": "⏰ This case is past its resolution deadline ({deadline}).",
     "banner_accepted": "✓ Accepted by {officer}. Resolution due by {deadline} ({days} days left).",
@@ -148,6 +148,12 @@ TR = {
     "ai_resolution_check": "AI Resolution Check",
     "progress_timeline": "Progress Timeline",
     "change_score": "change score",
+
+    "ai_verification_panel": "🤖 AI Verification",
+    "ai_match": "Photo and description are consistent.",
+    "ai_mismatch": "Photo could not confirm the description.",
+    "ai_signals": "Signals analysed",
+    "ai_warnings": "Quality note",
 
     "officer_queue_title": "Verification Queue",
     "needs_review": "Needs Review",
@@ -248,7 +254,7 @@ TR = {
     "nav_back_home": "← मुखपृष्ठ पर वापस जाएँ",
 
     "hero_title": "दर्ज करें। ट्रैक करें। समाधान देखें।",
-    "hero_body": "नागरिक फोटो या वीडियो प्रमाण के साथ स्थानीय समस्याएँ दर्ज करते हैं। सड़क व अवसंरचना से जुड़ी शिकायतों की जाँच हाल की सैटेलाइट तस्वीरों से स्वतः की जाती है; बाकी सभी की पुष्टि एक अधिकारी द्वारा की जाती है। स्वीकृति के बाद अधिकारी को तय समय-सीमा में समाधान करना होता है — और पहले/बाद की तस्वीरों की तुलना से तय होता है कि मामला वाकई हल हुआ है या नहीं।",
+    "hero_body": "नागरिक फोटो या वीडियो प्रमाण के साथ स्थानीय समस्याएँ दर्ज करते हैं। AI इंजन हर अपलोड की गई फोटो को बताई गई समस्या से मिलाकर जाँचता है कि समस्या वाकई मौजूद है; फिर उसकी पुष्टि अधिकारी द्वारा की जाती है। स्वीकृति के बाद अधिकारी को तय समय-सीमा में समाधान करना होता है — और पहले/बाद की तस्वीरों की तुलना से तय होता है कि मामला वाकई हल हुआ है या नहीं।",
     "stat_reported": "दर्ज की गई समस्याएँ",
     "stat_open": "वर्तमान में खुली",
     "stat_resolved": "हल व सत्यापित",
@@ -291,7 +297,7 @@ TR = {
     "describe_problem": "समस्या का विवरण दें",
     "describe_problem_ph": "क्या हो रहा है, और इससे लोगों पर क्या असर पड़ रहा है?",
     "category": "श्रेणी",
-    "category_hint": "\"सड़क व अवसंरचना\" शिकायतों की स्वतः सैटेलाइट AI जाँच होती है।",
+    "category_hint": "AI आपकी फोटो को नीचे बताई गई समस्या से मिलाकर जाँच करेगा।",
     "district": "ज़िला",
     "location_details": "स्थान विवरण",
     "location_ph": "गाँव / वार्ड / लैंडमार्क",
@@ -300,7 +306,7 @@ TR = {
     "evidence_hint": "JPG, PNG, WEBP, या MP4/MOV — सत्यापन के लिए आवश्यक",
     "btn_submit_problem": "समस्या दर्ज करें",
 
-    "banner_ai_verified": "🤖 स्वचालित सैटेलाइट जाँच से सत्यापित ({conf}% विश्वास)। अधिकारी द्वारा समाधान शुरू होने की प्रतीक्षा है।",
+    "banner_ai_verified": "🤖 आपकी फोटो बताई गई समस्या से मेल खाती है — AI द्वारा सत्यापित ({conf}% विश्वास)। अधिकारी द्वारा समाधान शुरू होने की प्रतीक्षा है।",
     "banner_pending_officer": "🕵️ क्षेत्रीय अधिकारी द्वारा मैन्युअल सत्यापन की प्रतीक्षा है।",
     "banner_overdue": "⏰ यह मामला अपनी समाधान समय-सीमा ({deadline}) पार कर चुका है।",
     "banner_accepted": "✓ {officer} द्वारा स्वीकृत। समाधान की समय-सीमा {deadline} है ({days} दिन शेष)।",
@@ -317,6 +323,12 @@ TR = {
     "ai_resolution_check": "AI समाधान जाँच",
     "progress_timeline": "प्रगति समयरेखा",
     "change_score": "परिवर्तन स्कोर",
+
+    "ai_verification_panel": "🤖 AI सत्यापन",
+    "ai_match": "फोटो और विवरण मेल खाते हैं।",
+    "ai_mismatch": "फोटो विवरण की पुष्टि नहीं कर सका।",
+    "ai_signals": "आकलित संकेत",
+    "ai_warnings": "गुणवत्ता टिप्पणी",
 
     "officer_queue_title": "सत्यापन कतार",
     "needs_review": "समीक्षा आवश्यक",
