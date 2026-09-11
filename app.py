@@ -16,6 +16,7 @@ plain sqlite3 (no ORM) — see db.py. Data lives in jsamadhan.db next to this
 file; delete it to reset to a clean seeded state.
 """
 
+import hashlib
 import json
 import math
 import os
@@ -34,9 +35,12 @@ import i18n
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 UPLOAD_DIR = os.path.join(BASE_DIR, "uploads")
+PROFILE_DIR = os.path.join(BASE_DIR, "static", "profile")
 os.makedirs(UPLOAD_DIR, exist_ok=True)
+os.makedirs(PROFILE_DIR, exist_ok=True)
 
 ALLOWED_EXT = {"png", "jpg", "jpeg", "gif", "webp", "mp4", "mov", "avi", "webm"}
+PROFILE_EXT = {"png", "jpg", "jpeg", "webp", "gif"}
 VIDEO_EXT = {"mp4", "mov", "avi", "webm"}
 IMAGE_LOCATION_TOLERANCE_METERS = 5000
 
@@ -104,6 +108,54 @@ def save_upload(file_storage):
     filename = f"{uuid.uuid4().hex}.{ext}"
     file_storage.save(os.path.join(UPLOAD_DIR, filename))
     return filename, ext in VIDEO_EXT
+
+
+def save_profile_photo(file_storage):
+    """Validate + resize an uploaded profile photo to a small square PNG."""
+    if not file_storage or not file_storage.filename:
+        return None
+    ext = file_storage.filename.rsplit(".", 1)[-1].lower() if "." in file_storage.filename else ""
+    if ext not in PROFILE_EXT:
+        raise ValueError("Unsupported photo type. Please upload an image (JPG, PNG, WEBP or GIF).")
+    try:
+        file_storage.stream.seek(0)
+        with Image.open(file_storage.stream) as image:
+            image.thumbnail((256, 256))
+            if image.mode in ("RGBA", "LA", "P"):
+                image = image.convert("RGBA")
+            else:
+                image = image.convert("RGB")
+            filename = f"{uuid.uuid4().hex}.png"
+            image.save(os.path.join(PROFILE_DIR, filename), "PNG")
+    except Exception:
+        raise ValueError("The photo could not be read. Please choose a valid image.") from ValueError
+    finally:
+        file_storage.stream.seek(0)
+    return filename
+
+
+def _remove_profile_file(filename):
+    if not filename:
+        return
+    try:
+        os.remove(os.path.join(PROFILE_DIR, filename))
+    except OSError:
+        pass
+
+
+def profile_photo_url(user):
+    """Uploaded profile photo, or a Gravatar derived from the user's email."""
+    photo = getattr(user, "profile_photo", None)
+    if photo:
+        return url_for("static", filename="profile/" + photo)
+    email = (getattr(user, "email", "") or "").strip().lower()
+    if not email:
+        return None
+    digest = hashlib.md5(email.encode("utf-8")).hexdigest()
+    return f"https://www.gravatar.com/avatar/{digest}?d=identicon&s=128"
+
+
+app.jinja_env.globals["profile_photo_url"] = profile_photo_url
 
 
 def _rational_to_float(value):
@@ -255,6 +307,59 @@ def login(role=None):
 def logout():
     session.clear()
     return redirect(url_for("landing"))
+
+
+# ---------------------------------------------------------------------------
+# account / profile
+# ---------------------------------------------------------------------------
+
+@app.route("/account", methods=["GET", "POST"])
+@login_required
+def account():
+    conn = db.get_db()
+    user = g.current_user
+
+    if request.method == "POST":
+        name = request.form.get("name", "").strip()
+        email = request.form.get("email", "").strip().lower()
+        phone = request.form.get("phone", "").strip()
+        alternate_phone = request.form.get("alternate_phone", "").strip()
+        home_address = request.form.get("home_address", "").strip()
+
+        errors = []
+        if not (name and email and phone):
+            errors.append("Please fill in your name, email and phone number.")
+        existing = db.get_user_by_email(conn, email)
+        if existing and existing["id"] != user.id:
+            errors.append("That email is already used by another account.")
+
+        action = request.form.get("action", "")
+        photo = request.files.get("profile_photo")
+        new_photo = None
+        if photo and photo.filename:
+            try:
+                new_photo = save_profile_photo(photo)
+            except ValueError as error:
+                errors.append(str(error))
+
+        if not errors:
+            db.update_user_account(conn, user.id, name, email, phone, alternate_phone, home_address)
+            if action == "remove_photo":
+                _remove_profile_file(user.profile_photo)
+                db.clear_profile_photo(conn, user.id)
+            elif new_photo:
+                _remove_profile_file(user.profile_photo)
+                db.set_profile_photo(conn, user.id, new_photo)
+
+        for message in errors:
+            flash(message, "error")
+        if not errors:
+            flash(i18n.t("photo_removed") if action == "remove_photo" else i18n.t("account_updated"), "success")
+
+        user = db.hydrate_user(db.get_user_by_id(conn, user.id))
+        g.current_user = user
+
+    return render_template("account.html", user=user)
 
 
 # ---------------------------------------------------------------------------

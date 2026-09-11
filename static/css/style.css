@@ -50,7 +50,10 @@ p{ margin:0 0 1em 0; max-width:62ch; }
 .govt-brand .brand{ display:flex; flex-direction:column; }
 .govt-brand .brand strong{ font-family:var(--font-head); font-size:1.15rem; letter-spacing:.02em; }
 .govt-brand .brand span{ font-size:.72rem; color:#C9D8CD; }
-.who{ font-size:.78rem; color:#B9CBC0; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.16); padding:5px 12px; border-radius:999px; }
+.who{ font-size:.78rem; color:#B9CBC0; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.16); padding:5px 12px; border-radius:999px; display:inline-flex; align-items:center; gap:8px; }
+.who-avatar{ width:22px; height:22px; border-radius:50%; object-fit:cover; background:#EFEAD9; }
+.account-photo{ width:110px; height:110px; border-radius:50%; object-fit:cover; border:3px solid #fff; box-shadow:0 2px 8px rgba(0,0,0,.18); background:#EFEAD9; }
+.account-photo-empty{ display:inline-flex; align-items:center; justify-content:center; font-size:2.4rem; font-weight:600; color:var(--forest); }
 .nav-btn{ display:inline-flex; align-items:center; padding:8px 16px; border-radius:var(--radius-s); font-weight:600; font-size:.88rem; }
 .nav-btn-primary{ background:var(--amber); color:#fff !important; }
 .nav-btn-primary:hover{ background:#AD7220; }

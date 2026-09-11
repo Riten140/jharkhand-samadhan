@@ -33,7 +33,10 @@
     <a href="{{ url_for('landing') }}">{{ t('nav_back_home') }}</a>
     {% include "_nav_links.html" %}
     {% if current_user %}
-    <span class="who">{{ current_user.name }} · {{ current_user.role|capitalize }}</span>
+    <span class="who">
+      {% if profile_photo_url(current_user) %}<img class="who-avatar" src="{{ profile_photo_url(current_user) }}" alt="">{% endif %}
+      <span>{{ current_user.name }} · {{ current_user.role|capitalize }}</span>
+    </span>
     <a class="nav-btn nav-btn-ghost" href="{{ url_for('logout') }}">{{ t('nav_logout') }}</a>
     {% endif %}
   </nav>

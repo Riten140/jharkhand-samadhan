@@ -129,6 +129,12 @@ def init_db():
     ):
         if column not in complaint_columns:
             conn.execute(f"ALTER TABLE complaints ADD COLUMN {column} {column_type}")
+    user_columns = {row[1] for row in conn.execute("PRAGMA table_info(users)")}
+    for column, column_type in (
+        ("alternate_phone", "TEXT"), ("home_address", "TEXT"), ("profile_photo", "TEXT"),
+    ):
+        if column not in user_columns:
+            conn.execute(f"ALTER TABLE users ADD COLUMN {column} {column_type}")
     conn.commit()
     conn.close()
 
@@ -224,6 +230,24 @@ def verify_password(user_row, password):
 
 def list_officers(conn):
     return [hydrate_user(r) for r in conn.execute("SELECT * FROM users WHERE role='officer' ORDER BY name").fetchall()]
+
+
+def update_user_account(conn, user_id, name, email, phone, alternate_phone, home_address):
+    conn.execute(
+        "UPDATE users SET name=?, email=?, phone=?, alternate_phone=?, home_address=? WHERE id=?",
+        (name, email, phone, alternate_phone, home_address, user_id),
+    )
+    conn.commit()
+
+
+def set_profile_photo(conn, user_id, filename):
+    conn.execute("UPDATE users SET profile_photo=? WHERE id=?", (filename, user_id))
+    conn.commit()
+
+
+def clear_profile_photo(conn, user_id):
+    conn.execute("UPDATE users SET profile_photo=NULL WHERE id=?", (user_id,))
+    conn.commit()
 
 
 def count_users(conn, role):

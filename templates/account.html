@@ -1,0 +1,61 @@
+{% extends "app_base.html" %}
+{% set active = 'account' %}
+{% block title %}{{ t('account_title') }} — {{ t('app_name') }}{% endblock %}
+{% block content %}
+
+<div class="topbar"><h1>{{ t('account_title') }}</h1></div>
+
+<form method="POST" enctype="multipart/form-data">
+<div class="grid grid-2" style="gap:22px;">
+  <div class="card">
+    <div class="id">{{ t('profile_photo') }}</div>
+
+    <div style="display:flex; flex-direction:column; align-items:center; gap:12px; margin-top:16px;">
+      {% set photo_url = profile_photo_url(current_user) %}
+      {% if photo_url %}
+      <img class="account-photo" src="{{ photo_url }}" alt="{{ current_user.name }}">
+      {% else %}
+      <div class="account-photo account-photo-empty">{{ current_user.name[:1]|upper }}</div>
+      {% endif %}
+    </div>
+
+    <div style="margin-top:4px;">
+      <label class="btn btn-ghost btn-block btn-file" style="cursor:pointer;">
+        {{ t('btn_upload_photo') }}
+        <input type="file" name="profile_photo" accept="image/*" style="display:none;" data-profile-photo>
+      </label>
+      <p class="hint" style="text-align:center;">{{ t('photo_explain') }}</p>
+      {% if current_user.profile_photo %}
+      <button type="submit" name="action" value="remove_photo" class="btn btn-outline btn-sm btn-block" style="color:var(--red); border-color:var(--red);">
+        {{ t('btn_remove_photo') }}
+      </button>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="id">{{ t('account_details') }}</div>
+
+    <label for="name">{{ t('full_name') }}</label>
+    <input type="text" id="name" name="name" value="{{ current_user.name }}" required>
+
+    <label for="email">{{ t('email') }}</label>
+    <input type="email" id="email" name="email" value="{{ current_user.email }}" required>
+
+    <label for="phone">{{ t('phone') }}</label>
+    <input type="tel" id="phone" name="phone" value="{{ current_user.phone }}" required>
+
+    <label for="alternate_phone">{{ t('alternate_phone') }}</label>
+    <input type="tel" id="alternate_phone" name="alternate_phone" value="{{ current_user.alternate_phone or '' }}">
+
+    <label for="home_address">{{ t('home_address') }}</label>
+    <textarea id="home_address" name="home_address" rows="3">{{ current_user.home_address or '' }}</textarea>
+
+    <div style="margin-top:18px;">
+      <button type="submit" class="btn btn-primary btn-block">{{ t('btn_save_changes') }}</button>
+    </div>
+  </div>
+</div>
+</form>
+
+{% endblock %}
