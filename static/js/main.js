@@ -67,6 +67,14 @@ document.addEventListener("DOMContentLoaded", function () {
     animateTitle();
   });
 
+  document.querySelectorAll("[data-profile-photo]").forEach(function (input) {
+    input.addEventListener("change", function () {
+      if (input.files && input.files.length > 0) {
+        input.form.submit();
+      }
+    });
+  });
+
   document.querySelectorAll("[data-evidence-controls]").forEach(function (controls) {
     var inputs = controls.querySelectorAll("[data-evidence-input]");
     var triggers = controls.querySelectorAll("[data-evidence-trigger]");

@@ -61,8 +61,15 @@ p{ margin:0 0 1em 0; max-width:62ch; }
 .nav-btn-ghost:hover{ background:rgba(255,255,255,.12); color:#fff !important; }
 
 /* ---------- hamburger + side drawer (mobile navigation) ---------- */
-.hamburger{ display:none; }
+.hamburger{ display:none; flex-shrink:0; }
 .drawer, .drawer-overlay{ display:none; }
+
+/* Desktop: always show the top nav bar, never the hamburger */
+@media (min-width:861px){
+  .topnav{ flex-wrap:nowrap; }
+  .main-nav{ display:flex; order:2; margin-left:auto; }
+  .hamburger{ display:none !important; }
+}
 
 /* ---------- buttons ---------- */
 .btn{ display:inline-flex; align-items:center; gap:8px; padding:11px 22px; border-radius:var(--radius-s); font-family:var(--font-head); font-weight:600; font-size:.9rem; border:1px solid transparent; cursor:pointer; transition:all .15s ease; }
@@ -238,12 +245,18 @@ tr.row-link:hover{ background:#FBF9F3; cursor:pointer; }
 
 /* Tablet & below — swap the desktop nav for a hamburger + side drawer */
 @media (max-width:860px){
-  .topnav{ padding:14px 20px; }
+  .topnav{ padding:14px 20px; flex-wrap:nowrap; }
   .page{ padding:26px 18px 56px; }
   .role-grid{ gap:12px; }
 
-  .main-nav{ display:none; }          /* top-row nav hidden on tablets/phones */
-  .hamburger{ display:inline-flex; flex-direction:column; align-items:center; justify-content:center;
+  /* brand grows, hamburger pinned to the top-right corner */
+  .govt-brand{ min-width:0; flex:1 1 auto; }
+  .govt-brand .brand{ min-width:0; }
+  .govt-brand .brand strong{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+  .main-nav{ display:none !important; }   /* no top-row nav on tablets/phones */
+  .hamburger{ display:inline-flex; margin-left:auto; order:3;
+    flex-direction:column; align-items:center; justify-content:center;
     gap:4px; width:42px; height:42px; border:1px solid rgba(255,255,255,.35);
     background:rgba(255,255,255,.08); border-radius:10px; cursor:pointer; flex-shrink:0; }
   .hamburger-line{ display:block; width:18px; height:2px; border-radius:2px; background:#fff; }

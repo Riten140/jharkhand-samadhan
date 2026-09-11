@@ -3,7 +3,7 @@
     <img class="brand-logo" src="{{ url_for('static', filename='img/logo.png') }}"
          alt="{{ t('app_name') }}" data-brand-logo>
     <span class="brand">
-      {% if active == 'landing' %}
+      {% if active in ('landing', 'dashboard') %}
       <strong class="erase-title" data-erase-title data-title-en="Jharkhand Samadhan" data-title-hi="झारखंड समाधान">Jharkhand Samadhan</strong>
       {% else %}
       <strong>{{ t('app_name') }}</strong>
