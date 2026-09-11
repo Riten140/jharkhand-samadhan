@@ -1,0 +1,25 @@
+{% extends "app_base.html" %}
+{% set active = 'dashboard' %}
+{% import "macros.html" as m %}
+{% block title %}{{ t('my_complaints') }} — {{ t('app_name') }}{% endblock %}
+{% block content %}
+
+<div class="topbar">
+  <h1>{{ t('my_complaints') }}</h1>
+  <a class="btn btn-primary" href="{{ url_for('report_problem') }}">{{ t('btn_new_report') }}</a>
+</div>
+
+{% for c in complaints %}
+<a class="complaint-card" href="{{ url_for('track_complaint', code=c.code) }}" style="display:flex;">
+  <div>
+    <div class="id">#{{ c.code }} · {{ c.created_at.strftime('%d %b %Y') }}</div>
+    <h3>{{ c.title }}</h3>
+    <div class="meta">{{ dist_label(c.district) }} · {{ cat_label(c.category) }}</div>
+  </div>
+  <div>{{ m.status_badge(c) }}</div>
+</a>
+{% else %}
+<div class="card">{{ t('no_complaints_yet') }} <a href="{{ url_for('report_problem') }}" style="color:var(--sal); font-weight:600;">{{ t('report_first') }}</a></div>
+{% endfor %}
+
+{% endblock %}

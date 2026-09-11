@@ -1,0 +1,63 @@
+{% extends "app_base.html" %}
+{% set active = 'dashboard' %}
+{% import "macros.html" as m %}
+{% block title %}{{ t('admin_overview') }} — {{ t('app_name') }}{% endblock %}
+{% block content %}
+
+<div class="topbar"><h1>{{ t('admin_overview') }}</h1></div>
+
+<div class="grid grid-4" style="margin-bottom:28px;">
+  <div class="kpi"><div class="n">{{ stats.total }}</div><div class="l">{{ t('total_complaints') }}</div></div>
+  <div class="kpi"><div class="n">{{ stats.open }}</div><div class="l">{{ t('open') }}</div></div>
+  <div class="kpi"><div class="n">{{ stats.resolved }}</div><div class="l">{{ t('resolved') }}</div></div>
+  <div class="kpi"><div class="n">{{ stats.overdue }}</div><div class="l">{{ t('overdue') }}</div></div>
+</div>
+
+<div class="section-title"><h2>{{ t('all_complaints') }}</h2></div>
+<div class="table-scroll" style="margin-bottom:32px;">
+<table>
+  <thead><tr><th>{{ t('th_id') }}</th><th>{{ t('th_title') }}</th><th>{{ t('th_district') }}</th><th>{{ t('th_category') }}</th><th>{{ t('th_officer') }}</th><th>{{ t('th_status') }}</th></tr></thead>
+  <tbody>
+    {% for c in complaints %}
+    <tr class="row-link" onclick="window.location='{{ url_for('admin_complaint', code=c.code) }}'">
+      <td>{{ c.code }}</td>
+      <td>{{ c.title }}</td>
+      <td>{{ dist_label(c.district) }}</td>
+      <td>{{ cat_label(c.category) }}</td>
+      <td>{{ c.officer.name if c.officer else '—' }}</td>
+      <td>{{ m.status_badge(c) }}</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="6">{{ t('no_complaints_filed') }}</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+
+<div class="grid grid-2">
+  <div class="card">
+    <h3>{{ t('officers_count') }} ({{ stats.officers }})</h3>
+    {% for o in officers %}
+      <p style="margin:4px 0;">{{ o.name }} — {{ o.email }}</p>
+    {% else %}
+      <p>{{ t('no_officers_yet') }}</p>
+    {% endfor %}
+  </div>
+
+  <div class="card">
+    <h3>{{ t('add_officer') }}</h3>
+    <form method="POST" action="{{ url_for('admin_create_officer') }}">
+      <label for="name">{{ t('full_name') }}</label>
+      <input type="text" id="name" name="name" required>
+      <label for="email">{{ t('email') }}</label>
+      <input type="email" id="email" name="email" required>
+      <label for="phone">{{ t('phone') }}</label>
+      <input type="tel" id="phone" name="phone" required>
+      <label for="password">{{ t('temp_password') }}</label>
+      <input type="password" id="password" name="password" required>
+      <button type="submit" class="btn btn-primary btn-block" style="margin-top:16px;">{{ t('btn_create_officer') }}</button>
+    </form>
+  </div>
+</div>
+
+{% endblock %}

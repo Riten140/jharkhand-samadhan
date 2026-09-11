@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}{{ t('register_title') }} — {{ t('app_name') }}{% endblock %}
+{% block body %}
+<header class="topnav">
+  <div class="brand"><strong>{{ t('app_name')|upper }}</strong><span>{{ t('register_title') }}</span></div>
+  <nav>
+    {% include "lang_switcher.html" %}
+    <a href="{{ url_for('landing') }}">{{ t('nav_back_home') }}</a>
+  </nav>
+</header>
+
+<div class="page page-narrow">
+  <div class="section-title"><h2>{{ t('register_title') }}</h2></div>
+  <p>{{ t('register_body') }}</p>
+
+  <div class="card">
+    <form method="POST">
+      <label for="name">{{ t('full_name') }}</label>
+      <input type="text" id="name" name="name" required>
+
+      <label for="email">{{ t('email') }}</label>
+      <input type="email" id="email" name="email" required>
+
+      <label for="phone">{{ t('phone') }}</label>
+      <input type="tel" id="phone" name="phone" required>
+
+      <label for="password">{{ t('password') }}</label>
+      <input type="password" id="password" name="password" required>
+
+      <div style="margin-top:22px;">
+        <button type="submit" class="btn btn-primary btn-block">{{ t('btn_create_account') }}</button>
+      </div>
+    </form>
+  </div>
+
+  <p style="margin-top:16px; font-size:.88rem; text-align:center;">
+    {{ t('already_registered') }} <a href="{{ url_for('login', role='citizen') }}" style="color:var(--sal); font-weight:600;">{{ t('btn_login') }}</a>
+  </p>
+</div>
+{% endblock %}

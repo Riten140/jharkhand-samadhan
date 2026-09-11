@@ -1,0 +1,19 @@
+<form class="lang-switch" onchange="window.location.href = this.action + this.langsel.value;" action="{{ url_for('set_language', code='') }}">
+  <select name="langsel" aria-label="{{ t('language') }}">
+    <optgroup label="Main / मुख्य">
+      {% for code, native, english, group, fb in LANGUAGES if group == 'primary' %}
+      <option value="{{ code }}" {{ 'selected' if code == current_lang_code }}>{{ native }}</option>
+      {% endfor %}
+    </optgroup>
+    <optgroup label="Jharkhand / झारखंड">
+      {% for code, native, english, group, fb in LANGUAGES if group == 'jharkhand' %}
+      <option value="{{ code }}" {{ 'selected' if code == current_lang_code }}>{{ native }}</option>
+      {% endfor %}
+    </optgroup>
+    <optgroup label="Other Indian Languages">
+      {% for code, native, english, group, fb in LANGUAGES if group == 'india' %}
+      <option value="{{ code }}" {{ 'selected' if code == current_lang_code }}>{{ native }}</option>
+      {% endfor %}
+    </optgroup>
+  </select>
+</form>

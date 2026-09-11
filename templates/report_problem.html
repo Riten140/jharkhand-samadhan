@@ -1,0 +1,93 @@
+{% extends "app_base.html" %}
+{% set active = 'report' %}
+{% block title %}{{ t('nav_report') }} — {{ t('app_name') }}{% endblock %}
+{% block head_extra %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+{% endblock %}
+{% block content %}
+
+<div class="topbar"><h1>{{ t('report_heading') }}</h1></div>
+
+<div class="card" style="max-width:640px;">
+  <label>{{ t('reported_by') }}</label>
+  <div class="readonly-field">{{ current_user.name }} · {{ current_user.email }} · {{ current_user.phone }}</div>
+  <p class="hint">{{ t('autofill_note') }}</p>
+
+  <form method="POST" enctype="multipart/form-data">
+    <label for="title">{{ t('problem_title') }}</label>
+    <input type="text" id="title" name="title" placeholder="{{ t('problem_title_ph') }}" required>
+
+    <label for="description">{{ t('describe_problem') }}</label>
+    <textarea id="description" name="description" placeholder="{{ t('describe_problem_ph') }}" required></textarea>
+
+    <div class="field-row">
+      <div>
+        <label for="category">{{ t('category') }}</label>
+        <select id="category" name="category">
+          {% for cat in categories %}<option value="{{ cat }}">{{ cat_label(cat) }}</option>{% endfor %}
+        </select>
+        <p class="hint">{{ t('category_hint') }}</p>
+      </div>
+      <div>
+        <label for="district">{{ t('district') }}</label>
+        <select id="district" name="district">
+          <option value="" selected>Select district</option>
+          {% for d in districts %}<option value="{{ d }}">{{ dist_label(d) }}</option>{% endfor %}
+        </select>
+      </div>
+    </div>
+
+    <label for="location_text">{{ t('location_details') }}</label>
+    <input type="text" id="location_text" name="location_text" placeholder="{{ t('location_ph') }}">
+    <div class="location-picker" data-location-picker>
+      <div class="location-picker-head">
+        <strong>Problem location</strong>
+        <button type="button" class="btn btn-ghost btn-sm" data-use-location>Use my current location</button>
+      </div>
+      <p class="hint" data-location-status>Getting your current location...</p>
+      <div class="location-search">
+        <input type="search" data-location-search placeholder="Search area, landmark, or address">
+        <button type="button" class="btn btn-forest btn-sm" data-search-location>Search</button>
+      </div>
+      <div class="location-suggestions" data-location-suggestions hidden></div>
+      <p class="hint location-search-status" data-location-search-status></p>
+      <div class="location-map" data-location-map aria-label="Select the problem location on the map"></div>
+      <input type="hidden" name="latitude" data-latitude>
+      <input type="hidden" name="longitude" data-longitude>
+      <label for="location_address">Full address</label>
+      <input type="text" id="location_address" name="location_address" data-location-address placeholder="Street, landmark, area">
+      <div class="field-row">
+        <div>
+          <label for="location_city">City / town</label>
+          <input type="text" id="location_city" name="location_city" data-location-city placeholder="City or town">
+        </div>
+        <div>
+          <label for="pincode">Pincode</label>
+          <input type="text" id="pincode" name="pincode" data-location-pincode inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="6-digit pincode">
+        </div>
+      </div>
+      <label for="location_state">State</label>
+      <input type="text" id="location_state" name="location_state" data-location-state placeholder="State">
+      <p class="hint">If automatic location is unavailable, click the problem spot on the map.</p>
+    </div>
+
+    <label>{{ t('evidence_label') }}</label>
+    <div class="evidence-controls" data-evidence-controls>
+      <button type="button" class="btn btn-ghost btn-sm" data-evidence-trigger="upload-evidence">Upload file</button>
+      <input type="file" id="upload-evidence" name="evidence" accept="image/*,video/*" data-evidence-input>
+      <button type="button" class="btn btn-ghost btn-sm" data-evidence-trigger="camera-evidence">Take picture</button>
+      <input type="file" id="camera-evidence" name="camera_evidence" accept="image/*" capture="environment" data-evidence-input>
+      <button type="button" class="btn btn-ghost btn-sm evidence-clear" data-clear-evidence hidden>Clear</button>
+    </div>
+    <div class="evidence-selected" data-evidence-name>{{ t('evidence_hint') }}</div>
+
+    <div style="margin-top:22px;">
+      <button type="submit" class="btn btn-primary btn-block">{{ t('btn_submit_problem') }}</button>
+    </div>
+  </form>
+</div>
+
+{% endblock %}
+{% block scripts %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends "app_base.html" %}
+{% set active = 'dashboard' %}
+{% import "macros.html" as m %}
+{% block title %}{{ t('officer_queue_title') }} — {{ t('app_name') }}{% endblock %}
+{% block content %}
+
+<div class="topbar"><h1>{{ t('officer_queue_title') }}</h1></div>
+
+<div class="section-title"><h2>{{ t('needs_review') }}</h2><p>{{ queue|length }} {{ t('waiting') }}</p></div>
+{% for c in queue %}
+<a class="complaint-card" href="{{ url_for('officer_complaint', code=c.code) }}" style="display:flex;">
+  <div>
+    <div class="id">#{{ c.code }} · {{ dist_label(c.district) }} · {{ c.created_at.strftime('%d %b %Y') }}</div>
+    <h3>{{ c.title }}</h3>
+    <div class="meta">{{ cat_label(c.category) }} {% if c.ai_confidence is not none %}· AI {{ c.ai_confidence }}%{% endif %}</div>
+  </div>
+  <div>{{ m.status_badge(c) }}</div>
+</a>
+{% else %}
+<div class="card" style="margin-bottom:24px;">{{ t('nothing_waiting') }}</div>
+{% endfor %}
+
+<div class="section-title" style="margin-top:30px;"><h2>{{ t('my_active_cases') }}</h2><p>{{ my_cases|length }} {{ t('in_progress') }}</p></div>
+{% for c in my_cases %}
+<a class="complaint-card" href="{{ url_for('officer_complaint', code=c.code) }}" style="display:flex;">
+  <div>
+    <div class="id">#{{ c.code }} · {{ dist_label(c.district) }}</div>
+    <h3>{{ c.title }}</h3>
+    <div class="meta">{{ t('due') }} {{ c.deadline.strftime('%d %b %Y') if c.deadline else '—' }}</div>
+  </div>
+  <div>{{ m.status_badge(c) }}</div>
+</a>
+{% else %}
+<div class="card" style="margin-bottom:24px;">{{ t('no_active_cases') }}</div>
+{% endfor %}
+
+<div class="section-title" style="margin-top:30px;"><h2>{{ t('recently_resolved') }}</h2></div>
+{% for c in resolved %}
+<div class="complaint-card">
+  <div>
+    <div class="id">#{{ c.code }}</div>
+    <h3>{{ c.title }}</h3>
+    <div class="meta">{{ c.resolved_at.strftime('%d %b %Y') if c.resolved_at else '' }}</div>
+  </div>
+  {{ m.status_badge(c) }}
+</div>
+{% else %}
+<div class="card">{{ t('no_resolved_yet') }}</div>
+{% endfor %}
+
+{% endblock %}

@@ -1,0 +1,12 @@
+{% macro status_badge(c) -%}
+  {%- if c.is_overdue -%}<span class="badge badge-overdue">{{ t('status_overdue') }}</span>
+  {%- elif c.status == 'Submitted' -%}<span class="badge badge-submitted">{{ t('status_submitted') }}</span>
+  {%- elif c.status == 'AI Verified' -%}<span class="badge badge-aiverified">{{ t('status_ai_verified') }}</span>
+  {%- elif c.status == 'Pending Officer Review' -%}<span class="badge badge-pending">{{ t('status_pending_officer') }}</span>
+  {%- elif c.status == 'Accepted by Officer' -%}<span class="badge badge-accepted">{{ t('status_accepted') }}</span>
+  {%- elif c.status == 'Resolved' -%}<span class="badge badge-resolved">{{ t('status_resolved') }}</span>
+  {%- elif c.status == 'Reopened' -%}<span class="badge badge-reopened">{{ t('status_reopened') }}</span>
+  {%- elif c.status == 'Rejected' -%}<span class="badge badge-rejected">{{ t('status_rejected') }}</span>
+  {%- else -%}<span class="badge badge-submitted">{{ c.status }}</span>
+  {%- endif -%}
+{%- endmacro %}

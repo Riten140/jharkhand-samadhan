@@ -1,0 +1,87 @@
+{% extends "app_base.html" %}
+{% import "macros.html" as m %}
+{% block title %}#{{ c.code }} — {{ t('app_name') }}{% endblock %}
+{% block content %}
+
+<div class="crumb"><a href="{{ url_for('citizen_dashboard') if current_user.role=='citizen' else url_for('landing') }}">{{ t('my_complaints') }}</a> / #{{ c.code }}</div>
+<div class="topbar">
+  <h1>{{ c.title }}</h1>
+  {{ m.status_badge(c) }}
+</div>
+
+{% if c.status == 'AI Verified' %}
+<div class="banner banner-ai">{{ t('banner_ai_verified', conf=c.ai_confidence) }}</div>
+{% elif c.status == 'Pending Officer Review' %}
+<div class="banner banner-warn">{{ t('banner_pending_officer') }}</div>
+{% elif c.status == 'Accepted by Officer' and c.is_overdue %}
+<div class="banner banner-danger">{{ t('banner_overdue', deadline=c.deadline.strftime('%d %b %Y')) }}</div>
+{% elif c.status == 'Accepted by Officer' %}
+<div class="banner banner-ok">{{ t('banner_accepted', officer=(c.officer.name if c.officer else ''), deadline=c.deadline.strftime('%d %b %Y'), days=c.days_left) }}</div>
+{% elif c.status == 'Reopened' %}
+<div class="banner banner-danger">{{ t('banner_reopened') }}</div>
+{% elif c.status == 'Resolved' %}
+<div class="banner banner-ok">{{ t('banner_resolved', date=c.resolved_at.strftime('%d %b %Y')) }}</div>
+{% elif c.status == 'Rejected' %}
+<div class="banner banner-danger">{{ t('banner_rejected') }}</div>
+{% endif %}
+
+<div class="grid grid-2" style="margin-bottom:22px;">
+  <div class="card">
+    <div class="id">{{ t('problem_section') }}</div>
+    <p style="margin:6px 0 14px;">{{ c.description }}</p>
+    <div class="meta" style="color:var(--ink-soft);">
+      📍 {{ c.location_text or '—' }}, {{ dist_label(c.district) }} · {{ cat_label(c.category) }}
+      {% if c.latitude is not none and c.longitude is not none %}
+      · <a href="https://www.openstreetmap.org/?mlat={{ c.latitude }}&mlon={{ c.longitude }}#map=18/{{ c.latitude }}/{{ c.longitude }}" target="_blank" rel="noopener">View on map</a>
+      {% endif %}
+      {% if c.location_address %}<br>{{ c.location_address }}{% endif %}
+      {% if c.location_city or c.pincode %}<br>{{ c.location_city or '' }}{% if c.pincode %} - {{ c.pincode }}{% endif %}{% endif %}
+    </div>
+  </div>
+  <div class="card">
+    <div class="id">{{ t('reported_by_section') }}</div>
+    <p style="margin:6px 0 0;">{{ c.citizen.name }}<br>{{ c.citizen.email }}<br>{{ c.citizen.phone }}</p>
+  </div>
+</div>
+
+<div class="section-title"><h2>{{ t('evidence_section') }}</h2></div>
+<div class="evidence-pair" style="margin-bottom:24px;">
+  <div class="evidence-box">
+    {% if c.is_photo_video %}
+      <video src="{{ url_for('uploaded_file', filename=c.photo_filename) }}" controls></video>
+    {% else %}
+      <img src="{{ url_for('uploaded_file', filename=c.photo_filename) }}" alt="Before evidence">
+    {% endif %}
+    <div class="cap">{{ t('evidence_before') }}</div>
+  </div>
+  {% if c.resolution_filename %}
+  <div class="evidence-box">
+    <img src="{{ url_for('uploaded_file', filename=c.resolution_filename) }}" alt="After evidence">
+    <div class="cap">{{ t('evidence_after_officer') }}</div>
+  </div>
+  {% else %}
+  <div class="evidence-box" style="display:flex; align-items:center; justify-content:center; min-height:140px; color:var(--ink-faint); font-size:.85rem;">
+    {{ t('evidence_after_pending') }}
+  </div>
+  {% endif %}
+</div>
+
+{% if c.resolution_note %}
+<div class="card" style="margin-bottom:24px; background:var(--sal-light); border:none;">
+  <strong>{{ t('ai_resolution_check') }}</strong>
+  <p style="margin-top:6px;">{{ c.resolution_note }}{% if c.resolution_confidence is not none %} ({{ t('change_score') }}: {{ c.resolution_confidence }}/100){% endif %}</p>
+</div>
+{% endif %}
+
+<div class="section-title"><h2>{{ t('progress_timeline') }}</h2></div>
+<ul class="timeline">
+  {% for log in c.logs %}
+  <li>
+    <div class="t-status">{{ log.status }}</div>
+    {% if log.note %}<div class="t-note">{{ log.note }}</div>{% endif %}
+    <div class="t-time">{{ log.timestamp.strftime('%d %b %Y, %I:%M %p') }}</div>
+  </li>
+  {% endfor %}
+</ul>
+
+{% endblock %}
