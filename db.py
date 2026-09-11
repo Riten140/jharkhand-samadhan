@@ -29,8 +29,11 @@ CATEGORIES = [
 ]
 
 DISTRICTS = [
-    "Ranchi", "Dhanbad", "Dumka", "Bokaro", "Gumla", "Deoghar",
-    "Hazaribagh", "Giridih", "East Singhbhum", "West Singhbhum",
+    "Bokaro", "Chatra", "Deoghar", "Dhanbad", "Dumka", "East Singhbhum",
+    "Garhwa", "Giridih", "Godda", "Gumla", "Hazaribagh", "Jamtara",
+    "Khunti", "Koderma", "Latehar", "Lohardaga", "Pakur", "Palamu",
+    "Ramgarh", "Ranchi", "Sahibganj", "Saraikela-Kharsawan", "Simdega",
+    "West Singhbhum",
 ]
 
 RESOLUTION_WINDOW_DAYS = 5

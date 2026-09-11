@@ -1,4 +1,9 @@
 document.addEventListener("DOMContentLoaded", function () {
+  // Hide the brand logo quietly if the image file isn't present yet
+  document.querySelectorAll("[data-brand-logo]").forEach(function (img) {
+    img.onerror = function () { img.style.display = "none"; };
+  });
+
   document.querySelectorAll("[data-erase-title]").forEach(function (title) {
     var english = title.dataset.titleEn;
     var hindi = title.dataset.titleHi;

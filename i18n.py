@@ -19,6 +19,7 @@ language without touching any template.
 """
 
 from flask import g
+import translation
 
 # (code, native_name, english_name, group, fallback_code)
 # group: "primary" | "jharkhand" | "india"
@@ -48,6 +49,18 @@ LANGUAGES = [
     ("ml", "മലയാളം", "Malayalam", "india", "en"),
     ("ur", "اردو", "Urdu", "india", "hi"),
     ("as", "অসমীয়া", "Assamese", "india", "bn"),
+
+    # Remaining Eighth Schedule languages. Fallbacks keep the UI readable
+    # (Hindi or English) until the runtime auto-translator fills them in.
+    ("ne", "नेपाली", "Nepali", "india", "hi"),
+    ("mai", "मैथिली", "Maithili", "india", "hi"),
+    ("bodo", "बड़ो", "Bodo", "india", "hi"),
+    ("doi", "डोगरी", "Dogri", "india", "hi"),
+    ("kok", "कोंकणी", "Konkani", "india", "hi"),
+    ("sa", "संस्कृतम्", "Sanskrit", "india", "hi"),
+    ("sd", "سنڌي", "Sindhi", "india", "hi"),
+    ("ks", "کٲشُر", "Kashmiri", "india", "hi"),
+    ("mni", "ꯃꯤꯇꯩꯂꯣꯟ", "Manipuri (Meitei)", "india", "en"),
 ]
 
 LANGUAGE_CODES = {code for code, *_ in LANGUAGES}
@@ -129,6 +142,7 @@ TR = {
     "evidence_label": "Photo or Video Evidence",
     "evidence_click": "Click to upload a photo or video of the problem",
     "evidence_hint": "JPG, PNG, WEBP, or MP4/MOV — required for verification",
+    "evidence_gps_hint": "No GPS tag on the photo? No problem — we'll use the location you picked on the map.",
     "btn_submit_problem": "Submit Problem",
 
     "banner_ai_verified": "🤖 Your photo matches the reported problem — verified by AI ({conf}% confidence). Awaiting officer to begin resolution.",
@@ -234,6 +248,20 @@ TR = {
     "dist_giridih": "Giridih",
     "dist_east_singhbhum": "East Singhbhum",
     "dist_west_singhbhum": "West Singhbhum",
+    "dist_chatra": "Chatra",
+    "dist_garhwa": "Garhwa",
+    "dist_godda": "Godda",
+    "dist_jamtara": "Jamtara",
+    "dist_khunti": "Khunti",
+    "dist_koderma": "Koderma",
+    "dist_latehar": "Latehar",
+    "dist_lohardaga": "Lohardaga",
+    "dist_pakur": "Pakur",
+    "dist_palamu": "Palamu",
+    "dist_ramgarh": "Ramgarh",
+    "dist_sahibganj": "Sahibganj",
+    "dist_saraikela_kharsawan": "Saraikela-Kharsawan",
+    "dist_simdega": "Simdega",
 
     "footer_note": "Jharkhand Samadhan — a Smart India Hackathon prototype.",
 },
@@ -304,6 +332,7 @@ TR = {
     "evidence_label": "फोटो या वीडियो प्रमाण",
     "evidence_click": "समस्या की फोटो या वीडियो अपलोड करने के लिए क्लिक करें",
     "evidence_hint": "JPG, PNG, WEBP, या MP4/MOV — सत्यापन के लिए आवश्यक",
+    "evidence_gps_hint": "फोटो में GPS टैग नहीं है? कोई बात नहीं — हम मानचित्र पर चुनी गई लोकेशन का उपयोग करेंगे।",
     "btn_submit_problem": "समस्या दर्ज करें",
 
     "banner_ai_verified": "🤖 आपकी फोटो बताई गई समस्या से मेल खाती है — AI द्वारा सत्यापित ({conf}% विश्वास)। अधिकारी द्वारा समाधान शुरू होने की प्रतीक्षा है।",
@@ -409,6 +438,20 @@ TR = {
     "dist_giridih": "गिरिडीह",
     "dist_east_singhbhum": "पूर्वी सिंहभूम",
     "dist_west_singhbhum": "पश्चिमी सिंहभूम",
+    "dist_chatra": "चतरा",
+    "dist_garhwa": "गढ़वा",
+    "dist_godda": "गोड्डा",
+    "dist_jamtara": "जामताड़ा",
+    "dist_khunti": "खूंटी",
+    "dist_koderma": "कोडरमा",
+    "dist_latehar": "लातेहार",
+    "dist_lohardaga": "लोहरदग्गा",
+    "dist_pakur": "पाकुड़",
+    "dist_palamu": "पलामू",
+    "dist_ramgarh": "रामगढ़",
+    "dist_sahibganj": "साहिबगंज",
+    "dist_saraikela_kharsawan": "सरायकेला-खरसावां",
+    "dist_simdega": "सिमडेगा",
 
     "footer_note": "झारखंड समाधान — एक Smart India Hackathon प्रोटोटाइप।",
 },
@@ -555,10 +598,16 @@ CATEGORY_KEYS = {
 }
 
 DISTRICT_KEYS = {
-    "Ranchi": "dist_ranchi", "Dhanbad": "dist_dhanbad", "Dumka": "dist_dumka",
-    "Bokaro": "dist_bokaro", "Gumla": "dist_gumla", "Deoghar": "dist_deoghar",
-    "Hazaribagh": "dist_hazaribagh", "Giridih": "dist_giridih",
-    "East Singhbhum": "dist_east_singhbhum", "West Singhbhum": "dist_west_singhbhum",
+    "Bokaro": "dist_bokaro", "Chatra": "dist_chatra", "Deoghar": "dist_deoghar",
+    "Dhanbad": "dist_dhanbad", "Dumka": "dist_dumka",
+    "East Singhbhum": "dist_east_singhbhum", "Garhwa": "dist_garhwa",
+    "Giridih": "dist_giridih", "Godda": "dist_godda", "Gumla": "dist_gumla",
+    "Hazaribagh": "dist_hazaribagh", "Jamtara": "dist_jamtara",
+    "Khunti": "dist_khunti", "Koderma": "dist_koderma", "Latehar": "dist_latehar",
+    "Lohardaga": "dist_lohardaga", "Pakur": "dist_pakur", "Palamu": "dist_palamu",
+    "Ramgarh": "dist_ramgarh", "Ranchi": "dist_ranchi", "Sahibganj": "dist_sahibganj",
+    "Saraikela-Kharsawan": "dist_saraikela_kharsawan", "Simdega": "dist_simdega",
+    "West Singhbhum": "dist_west_singhbhum",
 }
 
 
@@ -583,11 +632,57 @@ def current_lang():
 
 
 def t(key, **kwargs):
-    for code in _chain(current_lang()):
+    lang = current_lang()
+    for code in _chain(lang):
         val = TR.get(code, {}).get(key)
         if val is not None:
+            if code == "en" and lang != "en":
+                # The active language has no translation yet — let the runtime
+                # auto-translator produce one (and cache it), so new strings
+                # get translated without re-running any process. If it can't
+                # (network off, throttled, unsupported language) we keep the
+                # English value — the UI never shows a raw key.
+                auto = _auto_translate(lang, key, val)
+                if auto is not None:
+                    return auto.format(**kwargs) if kwargs else auto
             return val.format(**kwargs) if kwargs else val
     return key  # last resort — only hit for a genuinely undefined key (a bug)
+
+
+# in-process memo: key -> translated value or None (avoid repeat network calls
+# and repeated cache-file reads within one process)
+_runtime_memo = {}
+
+
+def _auto_translate(lang, key, en_val):
+    """Translate the English value of a missing key into `lang` on the fly."""
+    if "{" in en_val:  # has .format() placeholders — would get mangled
+        return None
+    memo_key = (lang, key)
+    if memo_key in _runtime_memo:
+        return _runtime_memo[memo_key]
+    out = translation.translate(en_val, lang)
+    _runtime_memo[memo_key] = out
+    return out
+
+
+def tr_text(text, lang=None):
+    """
+    Translate a piece of dynamic text (e.g. a complaint title, an officer's
+    note, new data pushed into the app later) into the viewer's language on
+    demand. Falls back to the original text when translation isn't possible.
+    """
+    lang = lang or current_lang()
+    if lang == "en" or not text or not text.strip():
+        return text
+    if not any(ch.isalpha() for ch in text):  # IDs, timestamps, numbers...
+        return text
+    memo_key = ("text", lang, text)
+    if memo_key in _runtime_memo:
+        return _runtime_memo[memo_key]
+    out = translation.translate(text, lang) or text
+    _runtime_memo[memo_key] = out
+    return out
 
 
 def cat_label(category):

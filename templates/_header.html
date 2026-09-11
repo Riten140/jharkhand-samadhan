@@ -1,0 +1,33 @@
+<header class="topnav">
+  <a class="govt-brand" href="{{ url_for('landing') }}" aria-label="{{ t('app_name') }}">
+    <img class="brand-logo" src="{{ url_for('static', filename='img/logo.png') }}"
+         alt="{{ t('app_name') }}" data-brand-logo>
+    <span class="brand">
+      {% if active == 'landing' %}
+      <strong class="erase-title" data-erase-title data-title-en="Jharkhand Samadhan" data-title-hi="झारखंड समाधान">Jharkhand Samadhan</strong>
+      {% else %}
+      <strong>{{ t('app_name') }}</strong>
+      {% endif %}
+      <span>{{ t('govt_of_jharkhand') }}</span>
+    </span>
+  </a>
+
+  <nav class="main-nav">
+    {% if current_user %}
+      {% if current_user.role == 'citizen' %}
+      <a class="{{ 'active' if active=='dashboard' }}" href="{{ url_for('citizen_dashboard') }}">{{ t('nav_my_complaints') }}</a>
+      <a class="{{ 'active' if active=='report' }}" href="{{ url_for('report_problem') }}">{{ t('nav_report') }}</a>
+      {% elif current_user.role == 'officer' %}
+      <a class="{{ 'active' if active=='dashboard' }}" href="{{ url_for('officer_dashboard') }}">{{ t('nav_queue') }}</a>
+      {% elif current_user.role == 'admin' %}
+      <a class="{{ 'active' if active=='dashboard' }}" href="{{ url_for('admin_dashboard') }}">{{ t('nav_overview') }}</a>
+      {% endif %}
+      <span class="who">{{ current_user.name }} · {{ current_user.role|capitalize }}</span>
+      <a class="nav-btn nav-btn-ghost" href="{{ url_for('logout') }}">{{ t('nav_logout') }}</a>
+    {% else %}
+      <a href="{{ url_for('register') }}">{{ t('nav_register') }}</a>
+      <a class="nav-btn nav-btn-primary" href="{{ url_for('login') }}">{{ t('btn_login') }}</a>
+    {% endif %}
+    {% include "lang_switcher.html" %}
+  </nav>
+</header>

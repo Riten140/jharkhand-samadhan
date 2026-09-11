@@ -5,14 +5,14 @@
 
 <div class="crumb"><a href="{{ url_for('admin_dashboard') }}">{{ t('nav_overview') }}</a> / #{{ c.code }}</div>
 <div class="topbar">
-  <h1>{{ c.title }}</h1>
+  <h1>{{ tr_text(c.title) }}</h1>
   {{ m.status_badge(c) }}
 </div>
 
 <div class="grid grid-2" style="margin-bottom:22px;">
   <div class="card">
     <div class="id">{{ t('problem_section') }}</div>
-    <p style="margin:6px 0 14px;">{{ c.description }}</p>
+    <p style="margin:6px 0 14px;">{{ tr_text(c.description) }}</p>
     <div class="meta" style="color:var(--ink-soft);">📍 {{ c.location_text or '—' }}, {{ dist_label(c.district) }} · {{ cat_label(c.category) }}{% if c.latitude is not none and c.longitude is not none %} · <a href="https://www.openstreetmap.org/?mlat={{ c.latitude }}&amp;mlon={{ c.longitude }}#map=18/{{ c.latitude }}/{{ c.longitude }}" target="_blank" rel="noopener">View on map</a>{% endif %}{% if c.location_address %}<br>{{ c.location_address }}{% endif %}{% if c.location_city or c.pincode %}<br>{{ c.location_city or '' }}{% if c.pincode %} - {{ c.pincode }}{% endif %}{% endif %}</div>
   </div>
   <div class="card">

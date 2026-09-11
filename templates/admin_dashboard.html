@@ -21,7 +21,7 @@
     {% for c in complaints %}
     <tr class="row-link" onclick="window.location='{{ url_for('admin_complaint', code=c.code) }}'">
       <td>{{ c.code }}</td>
-      <td>{{ c.title }}</td>
+      <td>{{ tr_text(c.title) }}</td>
       <td>{{ dist_label(c.district) }}</td>
       <td>{{ cat_label(c.category) }}</td>
       <td>{{ c.officer.name if c.officer else '—' }}</td>

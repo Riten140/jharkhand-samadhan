@@ -37,28 +37,25 @@ p{ margin:0 0 1em 0; max-width:62ch; }
 :focus-visible{ outline:2px solid var(--teal); outline-offset:2px; }
 
 /* ---------- nav ---------- */
-.topnav{ display:flex; align-items:center; justify-content:space-between; padding:18px 48px; background:var(--forest); color:#fff; }
+.topnav{ display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px 24px; padding:14px 48px; background:var(--forest-deep); color:#fff; }
 .topnav .brand{ display:flex; flex-direction:column; }
 .topnav .brand strong{ font-family:var(--font-head); font-size:1.15rem; letter-spacing:.02em; }
 .topnav .brand span{ font-size:.72rem; color:#C9D8CD; }
-.topnav nav{ display:flex; gap:22px; align-items:center; }
-.topnav nav a{ font-size:.9rem; color:#E7EDE7; }
+.topnav nav{ display:flex; gap:16px; align-items:center; flex-wrap:wrap; }
+.topnav nav a{ font-size:.9rem; color:#E7EDE7; text-decoration:none; }
 .topnav nav a:hover{ color:#fff; }
-.login-icon{ display:inline-grid; place-items:center; width:32px; height:32px; border:1px solid rgba(255,255,255,.45); border-radius:var(--radius-s); font-size:1.25rem !important; line-height:1; }
-.login-icon:hover{ background:rgba(255,255,255,.12); }
-.govt-brand{ display:flex; align-items:center; gap:10px; }
-.govt-mark{ display:grid; place-items:center; width:42px; height:42px; border:2px solid var(--amber); border-radius:50%; color:var(--amber); font-family:var(--font-head); font-size:1.05rem; font-weight:700; }
+.topnav nav a.active{ color:#fff; font-weight:600; }
+.brand-logo{ width:42px; height:42px; object-fit:contain; border-radius:50%; background:#fff; padding:3px; box-shadow:0 2px 6px rgba(0,0,0,.28); flex-shrink:0; }
+.govt-brand{ display:flex; align-items:center; gap:12px; text-decoration:none; }
 .govt-brand .brand{ display:flex; flex-direction:column; }
 .govt-brand .brand strong{ font-family:var(--font-head); font-size:1.15rem; letter-spacing:.02em; }
 .govt-brand .brand span{ font-size:.72rem; color:#C9D8CD; }
-
-.appbar{ display:flex; align-items:center; justify-content:space-between; padding:16px 32px; background:var(--forest-deep); color:#fff; }
-.appbar .brand{ font-family:var(--font-head); font-weight:700; }
-.appbar .who{ font-size:.82rem; color:#B9CBC0; }
-.appbar nav{ display:flex; gap:18px; align-items:center; }
-.appbar nav a{ font-size:.86rem; color:#D3DED7; }
-.appbar nav a:hover{ color:#fff; }
-.appbar nav a.active{ color:#fff; font-weight:600; }
+.who{ font-size:.78rem; color:#B9CBC0; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.16); padding:5px 12px; border-radius:999px; }
+.nav-btn{ display:inline-flex; align-items:center; padding:8px 16px; border-radius:var(--radius-s); font-weight:600; font-size:.88rem; }
+.nav-btn-primary{ background:var(--amber); color:#fff !important; }
+.nav-btn-primary:hover{ background:#AD7220; }
+.nav-btn-ghost{ border:1px solid rgba(255,255,255,.4); color:#E7EDE7 !important; }
+.nav-btn-ghost:hover{ background:rgba(255,255,255,.12); color:#fff !important; }
 
 /* ---------- buttons ---------- */
 .btn{ display:inline-flex; align-items:center; gap:8px; padding:11px 22px; border-radius:var(--radius-s); font-family:var(--font-head); font-weight:600; font-size:.9rem; border:1px solid transparent; cursor:pointer; transition:all .15s ease; }
@@ -223,7 +220,6 @@ tr.row-link:hover{ background:#FBF9F3; cursor:pointer; }
 }
 .lang-switch select:focus{ border-color:#fff; }
 .lang-switch option{ color:#111; }
-.appbar .lang-switch select{ border-color:var(--line); background:rgba(255,255,255,.06); }
 
 /* ---------- table scroll wrapper (mobile) ---------- */
 .table-scroll{ overflow-x:auto; -webkit-overflow-scrolling:touch; border-radius:var(--radius-m); }
@@ -236,7 +232,6 @@ tr.row-link:hover{ background:#FBF9F3; cursor:pointer; }
 /* Tablet & below */
 @media (max-width:860px){
   .topnav{ padding:14px 20px; }
-  .appbar{ padding:14px 18px; }
   .page{ padding:26px 18px 56px; }
   .role-grid{ gap:12px; }
 }
@@ -246,15 +241,12 @@ tr.row-link:hover{ background:#FBF9F3; cursor:pointer; }
   html{ -webkit-text-size-adjust:100%; }
   body{ font-size:14.5px; }
 
-  /* Nav bars: wrap instead of overflow, shrink brand */
-  .topnav, .appbar{
-    flex-wrap:wrap; row-gap:10px; padding:12px 16px;
-  }
-  .topnav nav, .appbar nav{ flex-wrap:wrap; gap:10px 14px; width:100%; justify-content:flex-start; }
-  .govt-mark{ width:34px; height:34px; font-size:.9rem; }
-  .topnav .brand strong, .govt-brand .brand strong{ font-size:1rem; }
-  .appbar .brand{ font-size:.95rem; }
-  .appbar .who{ display:block; font-size:.76rem; }
+  /* Nav: wrap instead of overflow, shrink brand */
+  .topnav{ padding:12px 16px; }
+  .topnav nav{ flex-wrap:wrap; gap:10px 14px; width:100%; justify-content:flex-start; }
+  .brand-logo{ width:34px; height:34px; }
+  .govt-brand .brand strong{ font-size:1rem; }
+  .who{ font-size:.76rem; padding:4px 10px; }
   .lang-switch select{ max-width:none; flex:1 1 auto; }
 
   /* Page & typography */
@@ -288,7 +280,4 @@ tr.row-link:hover{ background:#FBF9F3; cursor:pointer; }
 
   /* Buttons: full-width primary actions read better on small screens */
   .btn{ padding:11px 18px; }
-
-  /* Bigger touch target for the icon-only login button */
-  .login-icon{ width:40px; height:40px; }
 }

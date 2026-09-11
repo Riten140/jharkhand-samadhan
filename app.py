@@ -74,6 +74,7 @@ def inject_current_user():
 # Register as true Jinja *globals* (not just per-render context) so they
 # also work inside imported macros without needing "with context".
 app.jinja_env.globals["t"] = i18n.t
+app.jinja_env.globals["tr_text"] = i18n.tr_text
 app.jinja_env.globals["cat_label"] = i18n.cat_label
 app.jinja_env.globals["dist_label"] = i18n.dist_label
 
@@ -319,13 +320,11 @@ def report_problem():
                     return render_template("report_problem.html", categories=db.CATEGORIES, districts=db.DISTRICTS)
                 image_latitude = image_metadata.get("gps_latitude")
                 image_longitude = image_metadata.get("gps_longitude")
-                if image_latitude is None or image_longitude is None:
-                    flash("This image has no GPS metadata. Enable camera location tagging or upload a different image.", "error")
-                    return render_template("report_problem.html", categories=db.CATEGORIES, districts=db.DISTRICTS)
-                distance = distance_between_coordinates(latitude, longitude, image_latitude, image_longitude)
-                if distance > IMAGE_LOCATION_TOLERANCE_METERS:
-                    flash("The image location does not match the problem location. Please choose the correct map location or image.", "error")
-                    return render_template("report_problem.html", categories=db.CATEGORIES, districts=db.DISTRICTS)
+                if image_latitude is not None and image_longitude is not None:
+                    distance = distance_between_coordinates(latitude, longitude, image_latitude, image_longitude)
+                    if distance > IMAGE_LOCATION_TOLERANCE_METERS:
+                        flash("The image location does not match the problem location. Please select the correct spot on the map or verify the photo is from this location.", "error")
+                        return render_template("report_problem.html", categories=db.CATEGORIES, districts=db.DISTRICTS)
         try:
             filename, is_video = save_upload(evidence)
         except ValueError as e:
@@ -350,6 +349,9 @@ def report_problem():
         )
         db.add_log(conn, complaint_id, "Submitted",
                     f"Filed by {g.current_user.name} ({g.current_user.phone}, {g.current_user.email}).")
+        if not is_video and (image_latitude is None or image_longitude is None):
+            db.add_log(conn, complaint_id, "Submitted",
+                        "The uploaded photo carried no GPS location tag; the location selected on the map was recorded instead.")
 
         # --- automatic AI screening: photo vs the reported problem ---
         if not is_video:

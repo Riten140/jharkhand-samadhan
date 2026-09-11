@@ -11,7 +11,7 @@
 <a class="complaint-card" href="{{ url_for('officer_complaint', code=c.code) }}" style="display:flex;">
   <div>
     <div class="id">#{{ c.code }} · {{ dist_label(c.district) }} · {{ c.created_at.strftime('%d %b %Y') }}</div>
-    <h3>{{ c.title }}</h3>
+    <h3>{{ tr_text(c.title) }}</h3>
     <div class="meta">{{ cat_label(c.category) }} {% if c.ai_confidence is not none %}· AI {{ c.ai_confidence }}%{% endif %}</div>
   </div>
   <div>{{ m.status_badge(c) }}</div>
@@ -25,7 +25,7 @@
 <a class="complaint-card" href="{{ url_for('officer_complaint', code=c.code) }}" style="display:flex;">
   <div>
     <div class="id">#{{ c.code }} · {{ dist_label(c.district) }}</div>
-    <h3>{{ c.title }}</h3>
+    <h3>{{ tr_text(c.title) }}</h3>
     <div class="meta">{{ t('due') }} {{ c.deadline.strftime('%d %b %Y') if c.deadline else '—' }}</div>
   </div>
   <div>{{ m.status_badge(c) }}</div>
@@ -39,7 +39,7 @@
 <div class="complaint-card">
   <div>
     <div class="id">#{{ c.code }}</div>
-    <h3>{{ c.title }}</h3>
+    <h3>{{ tr_text(c.title) }}</h3>
     <div class="meta">{{ c.resolved_at.strftime('%d %b %Y') if c.resolved_at else '' }}</div>
   </div>
   {{ m.status_badge(c) }}
