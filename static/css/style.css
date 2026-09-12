@@ -60,15 +60,48 @@ p{ margin:0 0 1em 0; max-width:62ch; }
 .nav-btn-ghost{ border:1px solid rgba(255,255,255,.4); color:#E7EDE7 !important; }
 .nav-btn-ghost:hover{ background:rgba(255,255,255,.12); color:#fff !important; }
 
-/* ---------- hamburger + side drawer (mobile navigation) ---------- */
-.hamburger{ display:none; flex-shrink:0; }
-.drawer, .drawer-overlay{ display:none; }
+/* ---------- hamburger + side drawer (all screen widths) ---------- */
+/* The top-row nav is gone: every link lives in the slide menu. On desktop
+   only the citizen quick actions (Report a Problem / My Complaints) plus
+   the hamburger stay visible in the header bar. */
+.main-nav{ display:none !important; }
+.quick-actions{ display:flex; gap:10px; align-items:center; margin-left:auto; }
+.hamburger{ display:inline-flex; margin-left:auto; order:3; flex-shrink:0;
+  flex-direction:column; align-items:center; justify-content:center;
+  gap:4px; width:42px; height:42px; border:1px solid rgba(255,255,255,.35);
+  background:rgba(255,255,255,.08); border-radius:10px; cursor:pointer; }
+.quick-actions + .hamburger{ margin-left:4px; }
+.hamburger-line{ display:block; width:18px; height:2px; border-radius:2px; background:#fff; }
 
-/* Desktop: always show the top nav bar, never the hamburger */
+.drawer, .drawer-overlay{ display:block; }
+.drawer-overlay{ position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:60;
+  opacity:0; visibility:hidden; transition:opacity .25s ease, visibility .25s; }
+.drawer-overlay.open{ opacity:1; visibility:visible; }
+
+.drawer{ position:fixed; top:0; right:0; bottom:0; width:min(320px,84vw);
+  background:var(--forest-deep); color:#fff; z-index:70; padding:18px 20px 28px;
+  transform:translateX(105%); transition:transform .28s ease; overflow-y:auto;
+  box-shadow:-8px 0 24px rgba(0,0,0,.32); }
+.drawer.open{ transform:translateX(0); }
+.drawer-head{ display:flex; align-items:center; justify-content:space-between;
+  border-bottom:1px solid rgba(255,255,255,.14); padding-bottom:12px; }
+.drawer-head strong{ font-family:var(--font-head); font-size:.95rem; }
+.drawer-x{ border:0; background:transparent; color:#fff; font-size:1.3rem; cursor:pointer; padding:2px 6px; }
+.drawer-x:hover{ color:var(--amber); }
+.drawer-nav{ display:flex; flex-direction:column; gap:2px; padding-top:14px; }
+.drawer-nav a{ color:#E7EDE7; font-size:.95rem; padding:11px 6px;
+  border-bottom:1px solid rgba(255,255,255,.08); }
+.drawer-nav a.active{ color:#fff; font-weight:600; }
+.drawer-nav a:hover{ color:#fff; }
+.drawer-nav .who{ margin:12px 0 6px; align-self:flex-start; }
+.drawer-nav .nav-btn{ margin-top:8px; justify-content:center; }
+.drawer-lang{ margin-top:22px; }
+.drawer-lang-label{ font-size:.78rem; color:#C9D8CD; margin-bottom:6px; }
+.drawer-lang .lang-switch select{ width:100%; max-width:100%; }
+
+/* Desktop: single-row header, quick actions + hamburger pinned right */
 @media (min-width:861px){
   .topnav{ flex-wrap:nowrap; }
-  .main-nav{ display:flex; order:2; margin-left:auto; }
-  .hamburger{ display:none !important; }
 }
 
 /* ---------- buttons ---------- */
@@ -208,7 +241,11 @@ tr.row-link:hover{ background:#FBF9F3; cursor:pointer; }
 .login-choice{ margin-top:20px; }
 .login-choice .role-card{ position:relative; }
 .choice-arrow{ display:block; margin-top:14px; color:var(--sal); font-size:1.25rem; font-weight:600; }
-.erase-title{ display:inline-block; min-width:13ch; min-height:1.2em; }
+/* Brand title: a hidden full-text copy fixes the header width once, while the
+   animated title floats above it — typing/erasing can never shift layout. */
+.brand-title{ position:relative; display:inline-block; max-width:100%; overflow:hidden; }
+.brand-title-reserve{ visibility:hidden; white-space:nowrap; }
+.brand-title .erase-title{ position:absolute; left:0; top:0; max-width:100%; min-width:0; min-height:1.2em; white-space:nowrap; overflow:hidden; }
 
 .location-picker{ margin-top:16px; }
 .location-picker-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
@@ -296,6 +333,7 @@ tr.row-link:hover{ background:#FBF9F3; cursor:pointer; }
   /* Nav: wrap instead of overflow, shrink brand */
   .topnav{ padding:12px 16px; }
   .topnav nav{ flex-wrap:wrap; gap:10px 14px; width:100%; justify-content:flex-start; }
+  .quick-actions{ display:none; }   /* Report / My Complaints live in the slide menu on phones */
   .brand-logo{ width:34px; height:34px; }
   .govt-brand .brand strong{ font-size:1rem; }
   .who{ font-size:.76rem; padding:4px 10px; }
@@ -332,4 +370,48 @@ tr.row-link:hover{ background:#FBF9F3; cursor:pointer; }
 
   /* Buttons: full-width primary actions read better on small screens */
   .btn{ padding:11px 18px; }
+}
+/* ============ Landing page (home) ============ */
+.hero{ background:linear-gradient(180deg,#1E5B3D 0%,#143F2A 100%); border-bottom:4px solid var(--amber); }
+.hero-inner{ max-width:1100px; margin:0 auto; padding:56px 48px 64px; display:grid; grid-template-columns:1.05fr .95fr; gap:44px; align-items:center; }
+.hero-badge{ display:inline-block; font-size:.72rem; font-weight:700; letter-spacing:.14em; color:#EAC37C; border:1px solid rgba(234,195,124,.55); border-radius:999px; padding:7px 18px; margin-bottom:20px; }
+.hero-title{ font-family:Georgia,''Times New Roman'',serif; font-weight:700; font-size:2.7rem; line-height:1.15; color:#fff; margin:0 0 18px 0; }
+.hero-dot{ color:#EAC37C; }
+.hero-text{ color:#CFE0D3; font-size:.98rem; line-height:1.65; margin:0 0 28px 0; max-width:34rem; }
+.hero-cta{ display:flex; align-items:center; gap:26px; flex-wrap:wrap; }
+.btn-hero{ display:inline-block; background:var(--amber); color:#fff; font-weight:700; font-size:.95rem; padding:14px 30px; border-radius:12px; text-decoration:none; box-shadow:0 8px 20px rgba(0,0,0,.3); }
+.btn-hero:hover{ filter:brightness(1.08); color:#fff; }
+.hero-login{ color:#EAC37C; font-weight:600; font-size:.95rem; text-decoration:none; border-bottom:2px solid rgba(234,195,124,.6); padding-bottom:2px; }
+.hero-login:hover{ color:#F4D89A; }
+.hero-art svg{ width:100%; height:auto; display:block; border-radius:18px; box-shadow:0 18px 44px rgba(0,0,0,.35); }
+
+.page-landing h2{ font-size:1.7rem; color:var(--forest-deep); margin:0 0 10px 0; }
+.page-landing .section-sub{ color:var(--ink-soft); font-size:.95rem; max-width:46rem; margin:0 0 30px 0; }
+.problems{ padding-top:8px; }
+.problems-grid{ gap:22px; }
+.problem-card{ background:#fff; border:1px solid var(--line); border-radius:var(--radius-m); overflow:hidden; }
+.problem-card .thumb svg{ display:block; width:100%; height:auto; }
+.problem-body{ padding:18px 20px 22px; }
+.problem-body h3{ font-size:1.02rem; color:var(--forest-deep); margin:0 0 8px 0; }
+.problem-body p{ font-size:.86rem; color:var(--ink-soft); margin:0; line-height:1.6; }
+
+.how{ background:#E2EEE2; border:1px solid #CFDFCF; border-radius:22px; padding:36px 34px; margin:44px 0; }
+.how-head{ display:flex; align-items:baseline; justify-content:space-between; gap:12px 30px; flex-wrap:wrap; margin-bottom:26px; }
+.how-head h2{ margin:0; }
+.how-head p{ margin:0; color:var(--ink-soft); font-size:.9rem; }
+.step-card{ background:#fff; border:1px solid var(--line); border-radius:var(--radius-m); padding:26px 24px 28px; }
+.step-num{ display:inline-grid; place-items:center; width:52px; height:52px; border-radius:50%; color:#fff; font-family:var(--font-head); font-weight:700; font-size:1.3rem; margin-bottom:16px; }
+.step-num.n1{ background:#1F7A6D; }
+.step-num.n2{ background:var(--amber); }
+.step-num.n3{ background:#2E6B45; }
+.step-card h3{ font-size:1.02rem; color:var(--forest-deep); margin:0 0 10px 0; }
+.step-card p{ font-size:.86rem; color:var(--ink-soft); margin:0; line-height:1.65; }
+
+.stats-row{ margin:6px 0 8px; }
+.stats-row .kpi .n{ font-size:1.9rem; }
+
+@media (max-width:900px){
+  .hero-inner{ grid-template-columns:1fr; padding:40px 24px 48px; gap:30px; }
+  .hero-title{ font-size:2rem; }
+  .how{ padding:26px 20px; }
 }

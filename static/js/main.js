@@ -34,6 +34,21 @@ document.addEventListener("DOMContentLoaded", function () {
     var phase = "type-english";
     var index = 0;
 
+    // Lock the title to its full pixel width so typing/erasing (and the
+    // late Poppins font swap) can never move the surrounding layout.
+    function lockTitleWidth() {
+      var prev = title.textContent;
+      title.style.width = "auto";
+      title.textContent = english;
+      title.style.width = title.offsetWidth + "px";
+      title.textContent = prev;
+    }
+    lockTitleWidth();
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(lockTitleWidth);
+    }
+    window.addEventListener("load", lockTitleWidth);
+
     function animateTitle() {
       if (phase === "type-english" || phase === "type-hindi") {
         var target = phase === "type-english" ? english : hindi;

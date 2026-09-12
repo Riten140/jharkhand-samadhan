@@ -10,6 +10,7 @@ with computed fields like is_overdue attached in Python.
 import json
 import os
 import random
+import secrets
 import sqlite3
 from datetime import datetime, timedelta
 from types import SimpleNamespace
@@ -93,6 +94,17 @@ CREATE TABLE IF NOT EXISTS complaint_logs (
     note TEXT,
     timestamp TEXT NOT NULL,
     FOREIGN KEY(complaint_id) REFERENCES complaints(id)
+);
+
+CREATE TABLE IF NOT EXISTS otp_codes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER,
+    identity TEXT NOT NULL DEFAULT '',
+    purpose TEXT NOT NULL,
+    code_hash TEXT NOT NULL,
+    expires_at TEXT NOT NULL,
+    used INTEGER NOT NULL DEFAULT 0,
+    created_at TEXT NOT NULL
 );
 """
 
@@ -226,6 +238,73 @@ def get_user_by_email_role(conn, email, role):
 
 def verify_password(user_row, password):
     return check_password_hash(user_row["password_hash"], password)
+
+
+# ---------------------------------------------------------------------------
+# one-time passwords (phone + email verification)
+# ---------------------------------------------------------------------------
+
+OTP_TTL_SECONDS = 600
+
+
+def create_otp(conn, purpose, identity="", user_id=None, ttl_seconds=OTP_TTL_SECONDS):
+    """Generate a 6-digit OTP, store only its hash, and return the plain code
+    so the caller can deliver it (SMS gateway / email / demo flash). Any
+    previous unused code for the same purpose is invalidated first."""
+    if user_id is None:
+        conn.execute(
+            "DELETE FROM otp_codes WHERE purpose=? AND identity=? AND user_id IS NULL",
+            (purpose, identity),
+        )
+    else:
+        conn.execute(
+            "DELETE FROM otp_codes WHERE purpose=? AND user_id=?",
+            (purpose, user_id),
+        )
+    code = "%06d" % secrets.randbelow(1000000)
+    conn.execute(
+        "INSERT INTO otp_codes (user_id, identity, purpose, code_hash, expires_at, used, created_at)"
+        " VALUES (?,?,?,?,?,?,?)",
+        (user_id, identity, purpose, generate_password_hash(code),
+         (_now() + timedelta(seconds=ttl_seconds)).isoformat(), 0, _now().isoformat()),
+    )
+    conn.commit()
+    return code
+
+
+def verify_otp(conn, purpose, code, identity="", user_id=None):
+    """Check a submitted OTP; consumes it (marks used) on success."""
+    if user_id is None:
+        row = conn.execute(
+            "SELECT * FROM otp_codes WHERE purpose=? AND identity=? AND user_id IS NULL AND used=0"
+            " ORDER BY id DESC LIMIT 1",
+            (purpose, identity),
+        ).fetchone()
+    else:
+        row = conn.execute(
+            "SELECT * FROM otp_codes WHERE purpose=? AND user_id=? AND used=0"
+            " ORDER BY id DESC LIMIT 1",
+            (purpose, user_id),
+        ).fetchone()
+    if row is None:
+        return False
+    if (_parse_dt(row["expires_at"]) or _now()) < _now():
+        return False
+    if not check_password_hash(row["code_hash"], (code or "").strip()):
+        return False
+    conn.execute("UPDATE otp_codes SET used=1 WHERE id=?", (row["id"],))
+    conn.commit()
+    return True
+
+
+def create_verified_citizen(conn, name, email, phone, password_hash):
+    """Insert a citizen whose phone number and email were already OTP-verified."""
+    cur = conn.execute(
+        "INSERT INTO users (name, email, phone, role, password_hash, created_at) VALUES (?,?,?,?,?,?)",
+        (name, email, phone, "citizen", password_hash, _now().isoformat()),
+    )
+    conn.commit()
+    return cur.lastrowid
 
 
 def list_officers(conn):

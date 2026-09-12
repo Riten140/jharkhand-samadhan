@@ -2,65 +2,20 @@
 Internationalisation for Jharkhand Samadhan.
 
 Design:
-- English and Hindi are the two primary, fully-translated UI languages.
-- A third dropdown lets a citizen pick any other language — Jharkhand's own
-  regional/tribal languages, and other major Indian languages.
-- Every language has a `fallback` chain that ends at Hindi or English, so
-  picking a language with partial coverage never breaks the UI or shows a
-  raw key — it just shows the best available translation.
-
-Honesty note: full, review-quality translation of every string into all of
-Jharkhand's tribal languages (Santali, Ho, Mundari, Kurukh, Kharia) and every
-major Indian language needs native-speaker review before real deployment.
-This file translates the core navigation, actions, and status vocabulary for
-all listed languages, and falls back gracefully for anything not yet
-translated — the architecture is ready, coverage can be filled in per
-language without touching any template.
+- English and Hindi are the two fully-translated UI languages. The language
+  switcher offers exactly these two — nothing else.
+- t(key) looks the key up in the active language and falls back to English,
+  so the UI never shows a raw key.
 """
 
 from flask import g
 import translation
 
 # (code, native_name, english_name, group, fallback_code)
-# group: "primary" | "jharkhand" | "india"
+# Only English and Hindi are offered — nothing else.
 LANGUAGES = [
     ("en", "English", "English", "primary", None),
     ("hi", "हिन्दी", "Hindi", "primary", None),
-
-    # Jharkhand's own regional / tribal languages
-    ("nag", "नागपुरी", "Nagpuri", "jharkhand", "hi"),
-    ("khr", "खोरठा", "Khortha", "jharkhand", "hi"),
-    ("pnx", "पंचपरगनिया", "Panchpargania", "jharkhand", "hi"),
-    ("sat", "ᱥᱟᱱᱛᱟᱲᱤ Santali", "Santali", "jharkhand", "hi"),
-    ("hoc", "Ho", "Ho", "jharkhand", "hi"),
-    ("unr", "Mundari", "Mundari", "jharkhand", "hi"),
-    ("kru", "Kurukh (उराँव)", "Kurukh / Oraon", "jharkhand", "hi"),
-    ("kha", "Kharia", "Kharia", "jharkhand", "hi"),
-
-    # Other major Indian regional languages
-    ("bn", "বাংলা", "Bengali", "india", "en"),
-    ("or", "ଓଡ଼ିଆ", "Odia", "india", "en"),
-    ("mr", "मराठी", "Marathi", "india", "hi"),
-    ("gu", "ગુજરાતી", "Gujarati", "india", "hi"),
-    ("pa", "ਪੰਜਾਬੀ", "Punjabi", "india", "hi"),
-    ("ta", "தமிழ்", "Tamil", "india", "en"),
-    ("te", "తెలుగు", "Telugu", "india", "en"),
-    ("kn", "ಕನ್ನಡ", "Kannada", "india", "en"),
-    ("ml", "മലയാളം", "Malayalam", "india", "en"),
-    ("ur", "اردو", "Urdu", "india", "hi"),
-    ("as", "অসমীয়া", "Assamese", "india", "bn"),
-
-    # Remaining Eighth Schedule languages. Fallbacks keep the UI readable
-    # (Hindi or English) until the runtime auto-translator fills them in.
-    ("ne", "नेपाली", "Nepali", "india", "hi"),
-    ("mai", "मैथिली", "Maithili", "india", "hi"),
-    ("bodo", "बड़ो", "Bodo", "india", "hi"),
-    ("doi", "डोगरी", "Dogri", "india", "hi"),
-    ("kok", "कोंकणी", "Konkani", "india", "hi"),
-    ("sa", "संस्कृतम्", "Sanskrit", "india", "hi"),
-    ("sd", "سنڌي", "Sindhi", "india", "hi"),
-    ("ks", "کٲشُر", "Kashmiri", "india", "hi"),
-    ("mni", "ꯃꯤꯇꯩꯂꯣꯟ", "Manipuri (Meitei)", "india", "en"),
 ]
 
 LANGUAGE_CODES = {code for code, *_ in LANGUAGES}
@@ -107,6 +62,31 @@ TR = {
     "role_admin_desc": "Oversee every complaint, manage officers, and reassign overdue cases.",
     "demo_logins": "Demo logins",
     "or_register": "or register your own",
+    "hero_badge": "YOUR EVERY PROBLEM, SOLVED",
+    "hero_intro": "Citizens report local problems with photo or video evidence. Road and infrastructure reports are automatically screened against recent satellite imagery; everything else is verified by an officer. Once accepted, officers must resolve the case within a set deadline — and a before/after image check decides whether it's really fixed before the case closes.",
+    "btn_register_citizen": "Register as Citizen ›",
+    "problems_title": "Problems this platform solves",
+    "problems_sub": "From crumbling roads to garbage piles — snap a photo, file a report, and watch it get fixed. These are the everyday problems Samadhan is built for.",
+    "p1_title": "Broken roads & potholes",
+    "p1_desc": "Crumbling village lanes, dangerous potholes, and damaged culverts that make travel risky.",
+    "p2_title": "Water & handpumps",
+    "p2_desc": "Dry handpumps, leaking pipes, and unsafe drinking water reaching homes.",
+    "p3_title": "Electricity & lighting",
+    "p3_desc": "Dead streetlights, frequent power cuts, and villages still waiting for electrification.",
+    "p4_title": "Sanitation & garbage",
+    "p4_desc": "Garbage piles on streets, choked drains, and public spaces that are never cleaned.",
+    "p5_title": "Healthcare access",
+    "p5_desc": "Neglected health centres, missing doctors, and medical facilities far from home.",
+    "p6_title": "Schools & education",
+    "p6_desc": "Broken school buildings, no drinking water or toilets, and missing supplies for children.",
+    "how_title": "How Samadhan works",
+    "how_sub": "Three simple steps from a problem to a solution.",
+    "s1_title": "Report with proof",
+    "s1_desc": "Snap a photo or video of the problem and pin its location. Road reports even get an automatic satellite check.",
+    "s2_title": "Verified & assigned",
+    "s2_desc": "A field officer verifies your complaint and accepts the case with a fixed resolution deadline.",
+    "s3_title": "Watch it get fixed",
+    "s3_desc": "The officer uploads the after photo. Our AI compares before and after, then closes the case for good.",
 
     "login_title": "Login",
     "email": "Email",
@@ -121,6 +101,25 @@ TR = {
     "full_name": "Full Name",
     "phone": "Phone Number",
     "btn_create_account": "Create Account",
+
+    "reg_verify_title": "Verify your details",
+    "reg_verify_body": "We sent a 6-digit code to your phone and another to your email. Enter both below within 10 minutes to create your account.",
+    "phone_otp_label": "Phone OTP",
+    "email_otp_label": "Email OTP",
+    "btn_verify_create": "Verify & Create Account",
+    "btn_resend": "Resend",
+    "reg_otp_sent": "Verification codes sent to your phone and email.",
+    "reg_welcome": "Welcome, {name}! Your citizen account is ready.",
+    "otp_demo_note": "Demo (no SMS/email gateway): your code is",
+    "otp_sent_phone": "OTP sent to your phone {phone}.",
+    "otp_sent_email": "OTP sent to your email {email}.",
+    "otp_invalid": "That OTP is wrong or has expired. Please request a new one.",
+    "otp_phone_invalid": "The phone OTP is wrong or has expired.",
+    "otp_email_invalid": "The email OTP is wrong or has expired.",
+    "otp_label": "Mobile OTP",
+    "otp_verify_title": "Verify it's you",
+    "otp_account_hint": "To save any change here, first tap Send OTP, then enter the 6-digit code sent to your registered mobile number.",
+    "send_otp": "Send OTP",
 
     "account_title": "My Account",
     "account_details": "Personal Details",
@@ -309,6 +308,31 @@ TR = {
     "role_admin_desc": "सभी शिकायतों की निगरानी करें, अधिकारियों का प्रबंधन करें, और लंबित मामले पुनः सौंपें।",
     "demo_logins": "डेमो लॉगिन",
     "or_register": "या अपना खाता बनाएं",
+    "hero_badge": "आपकी हर समस्या, हल",
+    "hero_intro": "नागरिक फोटो या वीडियो प्रमाण के साथ स्थानीय समस्याएँ दर्ज करते हैं। सड़क और बुनियादी ढाँचे की शिकायतें ताज़ा सैटेलाइट तस्वीरों से अपने-आप जाँची जाती हैं; बाकी सबकी पुष्टि अधिकारी करते हैं। स्वीकृति के बाद अधिकारी को तय समय-सीमा में समाधान करना होता है — और पहले/बाद की तस्वीरों की तुलना से तय होता है कि मामला वाकई हल हुआ है या नहीं।",
+    "btn_register_citizen": "नागरिक के रूप में पंजीकरण ›",
+    "problems_title": "इस मंच से हल होने वाली समस्याएँ",
+    "problems_sub": "टूटी सड़कों से लेकर कचरे के ढेर तक — फोटो खींचें, शिकायत दर्ज करें, और समाधान देखें। समाधान इन्हीं रोज़मर्रा की समस्याओं के लिए बना है।",
+    "p1_title": "टूटी सड़कें व गड्ढे",
+    "p1_desc": "जर्जर गाँव की गलियाँ, खतरनाक गड्ढे और क्षतिग्रस्त पुलिया जिनसे सफ़र जोखिम भरा हो।",
+    "p2_title": "पानी व हैंडपंप",
+    "p2_desc": "सूखे हैंडपंप, रिसती पाइपलाइनें और घरों तक पहुँचता असुरक्षित पेयजल।",
+    "p3_title": "बिजली व रोशनी",
+    "p3_desc": "बंद स्ट्रीटलाइटें, बार-बार बिजली कटौती और अब भी बिजली का इंतज़ार करते गाँव।",
+    "p4_title": "सफ़ाई व कचरा",
+    "p4_desc": "सड़कों पर कचरे के ढेर, जाम नालियाँ और कभी साफ़ न होने वाले सार्वजनिक स्थल।",
+    "p5_title": "स्वास्थ्य सुविधाएँ",
+    "p5_desc": "उपेक्षित स्वास्थ्य केंद्र, डॉक्टरों की कमी और घर से दूर चिकित्सा सुविधाएँ।",
+    "p6_title": "स्कूल व शिक्षा",
+    "p6_desc": "टूटे स्कूल भवन, पेयजल-शौचालय की कमी और बच्चों के लिए ज़रूरी सामान का अभाव।",
+    "how_title": "समाधान कैसे काम करता है",
+    "how_sub": "समस्या से समाधान तक तीन आसान चरण।",
+    "s1_title": "प्रमाण के साथ दर्ज करें",
+    "s1_desc": "समस्या की फोटो या वीडियो लें और उसका स्थान दर्ज करें। सड़क की शिकायतें सैटेलाइट जाँच से भी गुज़रती हैं।",
+    "s2_title": "सत्यापित व सौंपा गया",
+    "s2_desc": "क्षेत्रीय अधिकारी आपकी शिकायत की पुष्टि करते हैं और तय समय-सीमा के साथ मामला स्वीकार करते हैं।",
+    "s3_title": "हल होते देखें",
+    "s3_desc": "अधिकारी बाद की फोटो अपलोड करते हैं। हमारा AI पहले/बाद की तुलना करता है, फिर मामला हमेशा के लिए बंद होता है।",
 
     "login_title": "लॉगिन",
     "email": "ईमेल",
@@ -323,6 +347,25 @@ TR = {
     "full_name": "पूरा नाम",
     "phone": "फ़ोन नंबर",
     "btn_create_account": "खाता बनाएं",
+
+    "reg_verify_title": "अपना विवरण सत्यापित करें",
+    "reg_verify_body": "हमने आपके फ़ोन पर और एक आपके ईमेल पर 6 अंकों का कोड भेजा है। खाता बनाने के लिए 10 मिनट के भीतर दोनों दर्ज करें।",
+    "phone_otp_label": "फ़ोन OTP",
+    "email_otp_label": "ईमेल OTP",
+    "btn_verify_create": "सत्यापित करें व खाता बनाएं",
+    "btn_resend": "पुनः भेजें",
+    "reg_otp_sent": "आपके फ़ोन और ईमेल पर सत्यापन कोड भेजे गए।",
+    "reg_welcome": "स्वागत है, {name}! आपका नागरिक खाता तैयार है।",
+    "otp_demo_note": "डेमो (कोई SMS/ईमेल गेटवे नहीं): आपका कोड है",
+    "otp_sent_phone": "आपके फ़ोन {phone} पर OTP भेजा गया।",
+    "otp_sent_email": "आपके ईमेल {email} पर OTP भेजा गया।",
+    "otp_invalid": "वह OTP गलत है या समाप्त हो चुका है। कृपया नया मँगवाएँ।",
+    "otp_phone_invalid": "फ़ोन OTP गलत है या समाप्त हो चुका है।",
+    "otp_email_invalid": "ईमेल OTP गलत है या समाप्त हो चुका है।",
+    "otp_label": "मोबाइल OTP",
+    "otp_verify_title": "पुष्टि करें कि यह आप ही हैं",
+    "otp_account_hint": "यहाँ कोई भी बदलाव सहेजने के लिए पहले OTP भेजें दबाएँ, फिर अपने पंजीकृत मोबाइल नंबर पर आया 6 अंकों का कोड दर्ज करें।",
+    "send_otp": "OTP भेजें",
 
     "account_title": "मेरा खाता",
     "account_details": "व्यक्तिगत विवरण",
@@ -478,127 +521,6 @@ TR = {
     "dist_simdega": "सिमडेगा",
 
     "footer_note": "झारखंड समाधान — एक Smart India Hackathon प्रोटोटाइप।",
-},
-
-# --- Core navigation/status/category vocabulary for other languages.
-# Anything not listed here falls back along the chain defined in LANGUAGES
-# (most Jharkhand languages -> Hindi, most others -> English) so the UI
-# never breaks or shows a raw key.
-
-"nag": {
-    "app_name": "झारखंड समाधान", "language": "बोली",
-    "nav_home": "घर", "nav_my_complaints": "हमार शिकायत", "nav_report": "समस्या लिखाईं",
-    "btn_login": "लॉगिन करीं", "btn_submit_problem": "समस्या भेजीं",
-    "role_citizen": "नागरिक", "role_officer": "अफसर", "role_admin": "एडमिन",
-},
-
-"khr": {
-    "app_name": "झारखंड समाधान", "language": "बोली",
-    "nav_home": "घर", "nav_my_complaints": "हमर शिकायत", "nav_report": "समस्या लिखो",
-    "btn_login": "लॉगिन करो", "btn_submit_problem": "समस्या भेजो",
-    "role_citizen": "नागरिक", "role_officer": "अफसर", "role_admin": "एडमिन",
-},
-
-"pnx": {
-    "app_name": "झारखंड समाधान", "language": "भाषा",
-    "nav_home": "घर", "nav_my_complaints": "हमर शिकायत", "nav_report": "समस्या लिखू",
-    "btn_login": "लॉगिन करू", "btn_submit_problem": "समस्या पठाऊ",
-    "role_citizen": "नागरिक", "role_officer": "अफसर", "role_admin": "एडमिन",
-},
-
-"sat": {
-    "app_name": "ᱡᱷᱟᱨᱠᱷᱚᱸᱰ ᱥᱟᱢᱟᱫᱷᱟᱱ", "language": "ᱯᱟᱹᱨᱥᱤ",
-    "nav_home": "ᱚᱲᱟᱜ", "role_citizen": "ᱦᱚᱲ",
-},
-
-"hoc": {"app_name": "झारखंड समाधान"},
-"unr": {"app_name": "झारखंड समाधान"},
-"kru": {"app_name": "झारखंड समाधान"},
-"kha": {"app_name": "झारखंड समाधान"},
-
-"bn": {
-    "app_name": "ঝাড়খণ্ড সমাধান", "language": "ভাষা",
-    "nav_home": "হোম", "nav_register": "নাগরিক হিসেবে নিবন্ধন করুন",
-    "nav_my_complaints": "আমার অভিযোগ", "nav_report": "সমস্যা রিপোর্ট করুন",
-    "nav_queue": "সারি", "nav_overview": "সংক্ষিপ্ত বিবরণ", "nav_logout": "লগ আউট",
-    "login_title": "লগইন", "email": "ইমেল", "password": "পাসওয়ার্ড", "btn_login": "লগ ইন করুন",
-    "full_name": "পূর্ণ নাম", "phone": "ফোন নম্বর", "btn_create_account": "অ্যাকাউন্ট তৈরি করুন",
-    "my_complaints": "আমার অভিযোগ", "btn_new_report": "+ নতুন সমস্যা রিপোর্ট করুন",
-    "role_citizen": "নাগরিক", "role_officer": "অফিসার", "role_admin": "অ্যাডমিন",
-    "status_submitted": "জমা দেওয়া হয়েছে", "status_resolved": "✓ সমাধান হয়েছে",
-    "status_pending_officer": "অফিসারের পর্যালোচনা বাকি", "status_rejected": "প্রত্যাখ্যাত",
-},
-
-"or": {
-    "app_name": "ଝାଡ଼ଖଣ୍ଡ ସମାଧାନ", "language": "ଭାଷା",
-    "nav_home": "ମୂଳପୃଷ୍ଠା", "nav_my_complaints": "ମୋର ଅଭିଯୋଗ", "nav_report": "ସମସ୍ୟା ରିପୋର୍ଟ କରନ୍ତୁ",
-    "login_title": "ଲଗଇନ", "email": "ଇମେଲ", "password": "ପାସୱାର୍ଡ", "btn_login": "ଲଗ ଇନ",
-    "role_citizen": "ନାଗରିକ", "role_officer": "ଅଧିକାରୀ", "role_admin": "ଆଡମିନ",
-},
-
-"mr": {
-    "app_name": "झारखंड समाधान", "language": "भाषा",
-    "nav_home": "मुख्यपृष्ठ", "nav_my_complaints": "माझ्या तक्रारी", "nav_report": "समस्या नोंदवा",
-    "login_title": "लॉगिन", "email": "ईमेल", "password": "पासवर्ड", "btn_login": "लॉग इन करा",
-    "full_name": "पूर्ण नाव", "phone": "फोन नंबर", "btn_create_account": "खाते तयार करा",
-    "role_citizen": "नागरिक", "role_officer": "अधिकारी", "role_admin": "प्रशासक",
-    "status_resolved": "✓ निकाली", "status_rejected": "नाकारले",
-},
-
-"gu": {
-    "app_name": "ઝારખંડ સમાધાન", "language": "ભાષા",
-    "nav_home": "હોમ", "nav_my_complaints": "મારી ફરિયાદો", "nav_report": "સમસ્યાની જાણ કરો",
-    "login_title": "લૉગિન", "email": "ઇમેઇલ", "password": "પાસવર્ડ", "btn_login": "લૉગ ઇન કરો",
-    "role_citizen": "નાગરિક", "role_officer": "અધિકારી", "role_admin": "એડમિન",
-},
-
-"pa": {
-    "app_name": "ਝਾਰਖੰਡ ਸਮਾਧਾਨ", "language": "ਭਾਸ਼ਾ",
-    "nav_home": "ਹੋਮ", "nav_my_complaints": "ਮੇਰੀਆਂ ਸ਼ਿਕਾਇਤਾਂ", "nav_report": "ਸਮੱਸਿਆ ਦਰਜ ਕਰੋ",
-    "login_title": "ਲੌਗਇਨ", "email": "ਈਮੇਲ", "password": "ਪਾਸਵਰਡ", "btn_login": "ਲੌਗ ਇਨ ਕਰੋ",
-    "role_citizen": "ਨਾਗਰਿਕ", "role_officer": "ਅਫ਼ਸਰ", "role_admin": "ਐਡਮਿਨ",
-},
-
-"ta": {
-    "app_name": "ஜார்க்கண்ட் சமாதான்", "language": "மொழி",
-    "nav_home": "முகப்பு", "nav_my_complaints": "எனது புகார்கள்", "nav_report": "பிரச்சனையைப் புகாரளிக்கவும்",
-    "login_title": "உள்நுழைய", "email": "மின்னஞ்சல்", "password": "கடவுச்சொல்", "btn_login": "உள்நுழைக",
-    "role_citizen": "குடிமகன்", "role_officer": "அதிகாரி", "role_admin": "நிர்வாகி",
-},
-
-"te": {
-    "app_name": "ఝార్ఖండ్ సమాధాన్", "language": "భాష",
-    "nav_home": "హోమ్", "nav_my_complaints": "నా ఫిర్యాదులు", "nav_report": "సమస్యను నివేదించండి",
-    "login_title": "లాగిన్", "email": "ఇమెయిల్", "password": "పాస్‌వర్డ్", "btn_login": "లాగిన్ చేయండి",
-    "role_citizen": "పౌరుడు", "role_officer": "అధికారి", "role_admin": "అడ్మిన్",
-},
-
-"kn": {
-    "app_name": "ಝಾರ್ಖಂಡ್ ಸಮಾಧಾನ್", "language": "ಭಾಷೆ",
-    "nav_home": "ಮುಖಪುಟ", "nav_my_complaints": "ನನ್ನ ದೂರುಗಳು", "nav_report": "ಸಮಸ್ಯೆ ವರದಿ ಮಾಡಿ",
-    "login_title": "ಲಾಗಿನ್", "email": "ಇಮೇಲ್", "password": "ಪಾಸ್‌ವರ್ಡ್", "btn_login": "ಲಾಗಿನ್ ಮಾಡಿ",
-    "role_citizen": "ನಾಗರಿಕ", "role_officer": "ಅಧಿಕಾರಿ", "role_admin": "ನಿರ್ವಾಹಕ",
-},
-
-"ml": {
-    "app_name": "ഝാർഖണ്ഡ് സമാധാൻ", "language": "ഭാഷ",
-    "nav_home": "ഹോം", "nav_my_complaints": "എന്റെ പരാതികൾ", "nav_report": "പ്രശ്നം റിപ്പോർട്ട് ചെയ്യുക",
-    "login_title": "ലോഗിൻ", "email": "ഇമെയിൽ", "password": "പാസ്‌വേഡ്", "btn_login": "ലോഗിൻ ചെയ്യുക",
-    "role_citizen": "പൗരൻ", "role_officer": "ഓഫീസർ", "role_admin": "അഡ്മിൻ",
-},
-
-"ur": {
-    "app_name": "جھارکھنڈ سمادھان", "language": "زبان",
-    "nav_home": "ہوم", "nav_my_complaints": "میری شکایات", "nav_report": "مسئلہ درج کریں",
-    "login_title": "لاگ ان", "email": "ای میل", "password": "پاس ورڈ", "btn_login": "لاگ ان کریں",
-    "role_citizen": "شہری", "role_officer": "افسر", "role_admin": "ایڈمن",
-},
-
-"as": {
-    "app_name": "ঝাৰখণ্ড সমাধান", "language": "ভাষা",
-    "nav_home": "হোম", "nav_my_complaints": "মোৰ অভিযোগ", "nav_report": "সমস্যা প্ৰতিবেদন কৰক",
-    "login_title": "লগইন", "email": "ইমেইল", "password": "পাছৱৰ্ড", "btn_login": "লগ ইন কৰক",
-    "role_citizen": "নাগৰিক", "role_officer": "বিষয়া", "role_admin": "প্ৰশাসক",
 },
 
 }
