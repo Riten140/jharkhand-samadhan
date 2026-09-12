@@ -48,7 +48,7 @@ p{ margin:0 0 1em 0; max-width:62ch; }
 .brand-logo{ width:42px; height:42px; object-fit:contain; border-radius:50%; background:#fff; padding:3px; box-shadow:0 2px 6px rgba(0,0,0,.28); flex-shrink:0; }
 .govt-brand{ display:flex; align-items:center; gap:12px; text-decoration:none; }
 .govt-brand .brand{ display:flex; flex-direction:column; }
-.govt-brand .brand strong{ font-family:var(--font-head); font-size:1.15rem; letter-spacing:.02em; }
+.govt-brand .brand strong{ font-family:var(--font-head); font-size:1.35rem; letter-spacing:.02em; }
 .govt-brand .brand span{ font-size:.72rem; color:#C9D8CD; }
 .who{ font-size:.78rem; color:#B9CBC0; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.16); padding:5px 12px; border-radius:999px; display:inline-flex; align-items:center; gap:8px; }
 .who-avatar{ width:22px; height:22px; border-radius:50%; object-fit:cover; background:#EFEAD9; }
@@ -335,7 +335,7 @@ tr.row-link:hover{ background:#FBF9F3; cursor:pointer; }
   .topnav nav{ flex-wrap:wrap; gap:10px 14px; width:100%; justify-content:flex-start; }
   .quick-actions{ display:none; }   /* Report / My Complaints live in the slide menu on phones */
   .brand-logo{ width:34px; height:34px; }
-  .govt-brand .brand strong{ font-size:1rem; }
+  .govt-brand .brand strong{ font-size:1.12rem; }
   .who{ font-size:.76rem; padding:4px 10px; }
   .lang-switch select{ max-width:none; flex:1 1 auto; }
 
