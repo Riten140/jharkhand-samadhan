@@ -37,6 +37,17 @@
   <p style="margin-top:16px; font-size:.88rem; text-align:center;">
     {{ t('new_here') }} <a href="{{ url_for('register') }}" style="color:var(--sal); font-weight:600;">{{ t('create_citizen_account') }}</a>
   </p>
+  <div class="demo-creds">
+    <strong>{{ t('demo_logins') }}</strong> — <code>citizen@example.com / citizen123</code>
+  </div>
+  {% elif role == 'officer' %}
+  <div class="demo-creds">
+    <strong>{{ t('demo_logins') }}</strong> — <code>officer1@jsamadhan.gov / officer123</code>
+  </div>
+  {% elif role == 'admin' %}
+  <div class="demo-creds">
+    <strong>{{ t('demo_logins') }}</strong> — <code>admin@jsamadhan.gov / admin123</code>
+  </div>
   {% endif %}
 </div>
 {% endblock %}

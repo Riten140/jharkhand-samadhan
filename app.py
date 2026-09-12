@@ -28,7 +28,6 @@ from functools import wraps
 from flask import (Flask, render_template, request, redirect, url_for,
                     flash, send_from_directory, abort, session, g)
 from PIL import ExifTags, Image
-from werkzeug.security import generate_password_hash
 
 import db
 import ai_engine
@@ -229,8 +228,10 @@ def login_required(fn):
 
 
 @app.route("/uploads/<path:filename>")
-@login_required
 def uploaded_file(filename):
+    # Public: the resolved-cases gallery on the landing page shows evidence
+    # photos to logged-out visitors, so uploads are served without login.
+    # Filenames are unguessable random names, so only linked photos are visible.
     return send_from_directory(UPLOAD_DIR, filename)
 
 
@@ -247,7 +248,8 @@ def landing():
     resolved = conn.execute("SELECT COUNT(*) c FROM complaints WHERE status='Resolved'").fetchone()["c"]
     open_ = conn.execute("SELECT COUNT(*) c FROM complaints WHERE status NOT IN ('Resolved','Rejected')").fetchone()["c"]
     stats = {"total": total, "resolved": resolved, "open": open_}
-    return render_template("landing.html", stats=stats)
+    resolved_cases = db.list_recent_resolved(conn)
+    return render_template("landing.html", stats=stats, resolved_cases=resolved_cases)
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -267,81 +269,13 @@ def register():
             flash("An account with this email already exists. Please log in instead.", "error")
             return render_template("register.html")
 
-        # Step 1: hold the details in the session (password only as a hash)
-        # and require OTP proof for both the phone number and the email.
-        session["pending_reg"] = {
-            "name": name,
-            "email": email,
-            "phone": phone,
-            "pw_hash": generate_password_hash(password),
-        }
-        _deliver_sms(phone, db.create_otp(conn, "reg_phone", identity=phone))
-        _deliver_email(email, db.create_otp(conn, "reg_email", identity=email))
-        flash(i18n.t("reg_otp_sent"), "success")
-        return redirect(url_for("register_verify"))
-
-    return render_template("register.html")
-
-
-@app.route("/register/verify", methods=["GET", "POST"])
-def register_verify():
-    pending = session.get("pending_reg")
-    if not pending:
-        return redirect(url_for("register"))
-    conn = db.get_db()
-
-    if request.method == "POST":
-        action = request.form.get("action", "")
-        if action == "resend_phone":
-            _deliver_sms(pending["phone"],
-                         db.create_otp(conn, "reg_phone", identity=pending["phone"]))
-            return redirect(url_for("register_verify"))
-        if action == "resend_email":
-            _deliver_email(pending["email"],
-                           db.create_otp(conn, "reg_email", identity=pending["email"]))
-            return redirect(url_for("register_verify"))
-
-        if db.get_user_by_email(conn, pending["email"]):
-            session.pop("pending_reg", None)
-            flash("An account with this email already exists. Please log in instead.", "error")
-            return redirect(url_for("login", role="citizen"))
-
-        phone_ok = db.verify_otp(conn, "reg_phone",
-                                 request.form.get("phone_otp", ""),
-                                 identity=pending["phone"])
-        email_ok = db.verify_otp(conn, "reg_email",
-                                 request.form.get("email_otp", ""),
-                                 identity=pending["email"])
-        if not phone_ok:
-            flash(i18n.t("otp_phone_invalid"), "error")
-        if not email_ok:
-            flash(i18n.t("otp_email_invalid"), "error")
-        if not (phone_ok and email_ok):
-            return render_template("register_verify.html", pending=pending)
-
-        user_id = db.create_verified_citizen(
-            conn, pending["name"], pending["email"], pending["phone"], pending["pw_hash"])
-        session.pop("pending_reg", None)
+        user_id = db.create_user(conn, name, email, phone, password, "citizen")
         session.permanent = True
         session["user_id"] = user_id
-        flash(i18n.t("reg_welcome").format(name=pending["name"]), "success")
+        flash(f"Welcome, {name}! Your citizen account is ready.", "success")
         return redirect(url_for("citizen_dashboard"))
 
-    return render_template("register_verify.html", pending=pending)
-
-
-def _deliver_sms(phone, code):
-    """Demo stand-in for an SMS gateway: show the code on screen instead.
-    To send real texts, call the SMS provider here and drop the flash."""
-    flash("%s (%s %s)" % (i18n.t("otp_sent_phone").format(phone=phone),
-                          i18n.t("otp_demo_note"), code), "success")
-
-
-def _deliver_email(email, code):
-    """Demo stand-in for an email sender: show the code on screen instead.
-    To send real mail, call the mail provider here and drop the flash."""
-    flash("%s (%s %s)" % (i18n.t("otp_sent_email").format(email=email),
-                          i18n.t("otp_demo_note"), code), "success")
+    return render_template("register.html")
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -382,18 +316,6 @@ def logout():
 # account / profile
 # ---------------------------------------------------------------------------
 
-@app.route("/account/send-otp", methods=["POST"])
-@login_required
-def account_send_otp():
-    """Send the account-change verification code to the mobile number on
-    record (not a newly typed one — this proves ownership of the account)."""
-    conn = db.get_db()
-    code = db.create_otp(conn, "account", identity=g.current_user.phone,
-                         user_id=g.current_user.id)
-    _deliver_sms(g.current_user.phone, code)
-    return redirect(url_for("account"))
-
-
 @app.route("/account", methods=["GET", "POST"])
 @login_required
 def account():
@@ -401,17 +323,6 @@ def account():
     user = g.current_user
 
     if request.method == "POST":
-        # No change — details, photo upload or photo removal — is applied
-        # until the mobile OTP is verified.
-        if not db.verify_otp(conn, "account", request.form.get("otp", ""),
-                             identity=user.phone, user_id=user.id):
-            for field in ("name", "email", "phone", "alternate_phone", "home_address"):
-                value = (request.form.get(field, "") or "").strip()
-                setattr(user, field, value.lower() if field == "email" else value)
-            g.current_user = user
-            flash(i18n.t("otp_invalid"), "error")
-            return render_template("account.html", user=user)
-
         name = request.form.get("name", "").strip()
         email = request.form.get("email", "").strip().lower()
         phone = request.form.get("phone", "").strip()
@@ -468,7 +379,17 @@ def citizen_dashboard():
     resolved = conn.execute("SELECT COUNT(*) c FROM complaints WHERE status='Resolved'").fetchone()["c"]
     open_ = conn.execute("SELECT COUNT(*) c FROM complaints WHERE status NOT IN ('Resolved','Rejected')").fetchone()["c"]
     stats = {"total": total, "resolved": resolved, "open": open_}
-    return render_template("landing.html", stats=stats, active="dashboard")
+    resolved_cases = db.list_recent_resolved(conn)
+    return render_template("landing.html", stats=stats, active="dashboard",
+                           resolved_cases=resolved_cases)
+
+
+@app.route("/citizen/complaints")
+@role_required("citizen")
+def my_complaints():
+    conn = db.get_db()
+    complaints = db.list_by_citizen(conn, g.current_user.id)
+    return render_template("my_complaints.html", complaints=complaints)
 
 
 @app.route("/citizen/report", methods=["GET", "POST"])

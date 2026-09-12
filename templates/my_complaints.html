@@ -1,0 +1,36 @@
+{% extends "app_base.html" %}
+{% import "macros.html" as m %}
+{% set active = 'complaints' %}
+{% block title %}{{ t('my_complaints') }} — {{ t('app_name') }}{% endblock %}
+{% block content %}
+
+<div class="topbar">
+  <h1>{{ t('my_complaints') }}</h1>
+  <a class="btn btn-primary btn-sm" href="{{ url_for('report_problem') }}">{{ t('btn_new_report') }}</a>
+</div>
+
+{% if complaints %}
+<p class="section-sub">{{ t('my_reports_sub') }}</p>
+<div class="grid grid-3 problems-grid">
+  {% for c in complaints %}
+  <a class="problem-card report-card" href="{{ url_for('track_complaint', code=c.code) }}">
+    <div class="thumb"><img src="{{ url_for('uploaded_file', filename=c.photo_filename) }}" alt="" loading="lazy"></div>
+    <div class="problem-body">
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:8px;">
+        <span class="id">#{{ c.code }}</span>
+        {{ m.status_badge(c) }}
+      </div>
+      <h3>{{ tr_text(c.title) }}</h3>
+      <p>{{ tr_text(c.description[:110]) }}{% if c.description|length > 110 %}…{% endif %}</p>
+    </div>
+  </a>
+  {% endfor %}
+</div>
+{% else %}
+<div class="card empty-state">
+  <p>{{ t('no_complaints_yet') }}</p>
+  <a class="btn btn-primary" href="{{ url_for('report_problem') }}">{{ t('report_first') }}</a>
+</div>
+{% endif %}
+
+{% endblock %}

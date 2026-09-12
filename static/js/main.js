@@ -34,30 +34,18 @@ document.addEventListener("DOMContentLoaded", function () {
     var phase = "type-english";
     var index = 0;
 
-    // Lock the title to its full pixel width so typing/erasing (and the
-    // late Poppins font swap) can never move the surrounding layout.
-    function lockTitleWidth() {
-      var prev = title.textContent;
-      title.style.width = "auto";
-      title.textContent = english;
-      title.style.width = title.offsetWidth + "px";
-      title.textContent = prev;
-    }
-    lockTitleWidth();
-    if (document.fonts && document.fonts.ready) {
-      document.fonts.ready.then(lockTitleWidth);
-    }
-    window.addEventListener("load", lockTitleWidth);
-
+    // One full run only: English -> erase -> Hindi -> erase -> English,
+    // then stop and settle on the English title.
     function animateTitle() {
-      if (phase === "type-english" || phase === "type-hindi") {
-        var target = phase === "type-english" ? english : hindi;
+      if (phase === "type-english" || phase === "type-hindi" || phase === "type-english-final") {
+        var target = phase === "type-hindi" ? hindi : english;
         if (index < target.length) {
           title.textContent = target.slice(0, index + 1);
           index += 1;
           window.setTimeout(animateTitle, 105);
           return;
         }
+        if (phase === "type-english-final") return; // settled — no more animation
         phase = phase === "type-english" ? "erase-english" : "erase-hindi";
         index = target.length;
         window.setTimeout(animateTitle, 1700);
@@ -72,7 +60,7 @@ document.addEventListener("DOMContentLoaded", function () {
           window.setTimeout(animateTitle, 65);
           return;
         }
-        phase = phase === "erase-english" ? "type-hindi" : "type-english";
+        phase = phase === "erase-english" ? "type-hindi" : "type-english-final";
         index = 0;
         window.setTimeout(animateTitle, 450);
       }

@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% import "macros.html" as m %}
 {% set active = active|default('landing') %}
 {% block title %}{{ t('app_name') }}{% endblock %}
 {% block body %}
@@ -198,11 +199,40 @@
     <div class="kpi"><div class="n">{{ stats.resolved }}</div><div class="l">{{ t('stat_resolved') }}</div></div>
   </div>
 
-  <div class="demo-creds">
-    <strong>{{ t('demo_logins') }}</strong> — Admin: <code>admin@jsamadhan.gov / admin123</code> ·
-    Officer: <code>officer1@jsamadhan.gov / officer123</code> ·
-    Citizen: <code>citizen@example.com / citizen123</code> ({{ t('or_register') }})
-  </div>
+  {% if resolved_cases %}
+  <section class="gallery">
+    <h2>{{ t('gallery_title') }}</h2>
+    <p class="section-sub">{{ t('gallery_sub') }}</p>
+    <div class="grid grid-2 problems-grid">
+      {% for c in resolved_cases %}
+      <article class="problem-card">
+        <div class="thumb before-after">
+          <div>
+            <img src="{{ url_for('uploaded_file', filename=c.photo_filename) }}" alt="" loading="lazy">
+            <span class="cap">{{ t('gallery_before') }}</span>
+          </div>
+          {% if c.resolution_filename %}
+          <div>
+            <img src="{{ url_for('uploaded_file', filename=c.resolution_filename) }}" alt="" loading="lazy">
+            <span class="cap">{{ t('gallery_after') }}</span>
+          </div>
+          {% endif %}
+        </div>
+        <div class="problem-body">
+          <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:8px;">
+            <span class="id">{{ dist_label(c.district) }}{% if c.resolved_at %} · {{ c.resolved_at.strftime('%d %b %Y') }}{% endif %}</span>
+            {{ m.status_badge(c) }}
+          </div>
+          <h3>{{ tr_text(c.title) }}</h3>
+          <p>{{ tr_text(c.description[:160]) }}{% if c.description|length > 160 %}…{% endif %}</p>
+          {% if c.location_text %}<p class="meta" style="margin-top:8px;">📍 {{ c.location_text }}</p>{% endif %}
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
 </div>
 
 <footer class="footer">{{ t('footer_note') }}</footer>

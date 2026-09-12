@@ -4,7 +4,7 @@
          alt="{{ t('app_name') }}" data-brand-logo>
     <span class="brand">
       {% if active in ('landing', 'dashboard') %}
-      <strong class="brand-title"><span class="brand-title-reserve" aria-hidden="true">Jharkhand Samadhan</span><span class="erase-title" data-erase-title data-title-en="Jharkhand Samadhan" data-title-hi="झारखंड समाधान">Jharkhand Samadhan</span></strong>
+      <strong class="erase-title" data-erase-title data-title-en="Jharkhand Samadhan" data-title-hi="झारखंड समाधान">Jharkhand Samadhan</strong>
       {% else %}
       <strong>{{ t('app_name') }}</strong>
       {% endif %}
@@ -19,7 +19,7 @@
   {% if current_user and current_user.role == 'citizen' %}
   <span class="quick-actions">
     <a class="nav-btn nav-btn-primary" href="{{ url_for('report_problem') }}">{{ t('nav_report') }}</a>
-    <a class="nav-btn nav-btn-ghost" href="{{ url_for('citizen_dashboard') }}">{{ t('nav_my_complaints') }}</a>
+    <a class="nav-btn nav-btn-ghost" href="{{ url_for('my_complaints') }}">{{ t('nav_my_complaints') }}</a>
   </span>
   {% endif %}
 

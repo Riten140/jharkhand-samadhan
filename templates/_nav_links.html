@@ -1,6 +1,6 @@
 {% if current_user %}
   {% if current_user.role == 'citizen' %}
-  <a class="{{ 'active' if active=='dashboard' }}" href="{{ url_for('citizen_dashboard') }}">{{ t('nav_my_complaints') }}</a>
+  <a class="{{ 'active' if active=='complaints' }}" href="{{ url_for('my_complaints') }}">{{ t('nav_my_complaints') }}</a>
   <a class="{{ 'active' if active=='report' }}" href="{{ url_for('report_problem') }}">{{ t('nav_report') }}</a>
   {% elif current_user.role == 'officer' %}
   <a class="{{ 'active' if active=='dashboard' }}" href="{{ url_for('officer_dashboard') }}">{{ t('nav_queue') }}</a>

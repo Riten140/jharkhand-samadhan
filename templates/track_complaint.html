@@ -3,7 +3,7 @@
 {% block title %}#{{ c.code }} — {{ t('app_name') }}{% endblock %}
 {% block content %}
 
-<div class="crumb"><a href="{{ url_for('citizen_dashboard') if current_user.role=='citizen' else url_for('landing') }}">{{ t('my_complaints') }}</a> / #{{ c.code }}</div>
+<div class="crumb"><a href="{{ url_for('my_complaints') if current_user.role=='citizen' else url_for('landing') }}">{{ t('my_complaints') }}</a> / #{{ c.code }}</div>
 <div class="topbar">
   <h1>{{ tr_text(c.title) }}</h1>
   {{ m.status_badge(c) }}

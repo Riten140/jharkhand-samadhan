@@ -48,7 +48,7 @@ p{ margin:0 0 1em 0; max-width:62ch; }
 .brand-logo{ width:42px; height:42px; object-fit:contain; border-radius:50%; background:#fff; padding:3px; box-shadow:0 2px 6px rgba(0,0,0,.28); flex-shrink:0; }
 .govt-brand{ display:flex; align-items:center; gap:12px; text-decoration:none; }
 .govt-brand .brand{ display:flex; flex-direction:column; }
-.govt-brand .brand strong{ font-family:var(--font-head); font-size:1.15rem; letter-spacing:.02em; }
+.govt-brand .brand strong{ font-family:var(--font-head); font-size:1.3rem; letter-spacing:.02em; }
 .govt-brand .brand span{ font-size:.72rem; color:#C9D8CD; }
 .who{ font-size:.78rem; color:#B9CBC0; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.16); padding:5px 12px; border-radius:999px; display:inline-flex; align-items:center; gap:8px; }
 .who-avatar{ width:22px; height:22px; border-radius:50%; object-fit:cover; background:#EFEAD9; }
@@ -241,11 +241,7 @@ tr.row-link:hover{ background:#FBF9F3; cursor:pointer; }
 .login-choice{ margin-top:20px; }
 .login-choice .role-card{ position:relative; }
 .choice-arrow{ display:block; margin-top:14px; color:var(--sal); font-size:1.25rem; font-weight:600; }
-/* Brand title: a hidden full-text copy fixes the header width once, while the
-   animated title floats above it — typing/erasing can never shift layout. */
-.brand-title{ position:relative; display:inline-block; max-width:100%; overflow:hidden; }
-.brand-title-reserve{ visibility:hidden; white-space:nowrap; }
-.brand-title .erase-title{ position:absolute; left:0; top:0; max-width:100%; min-width:0; min-height:1.2em; white-space:nowrap; overflow:hidden; }
+.erase-title{ display:inline-block; white-space:nowrap; }
 
 .location-picker{ margin-top:16px; }
 .location-picker-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
@@ -292,6 +288,7 @@ tr.row-link:hover{ background:#FBF9F3; cursor:pointer; }
   .govt-brand .brand strong{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 
   .main-nav{ display:none !important; }   /* no top-row nav on tablets/phones */
+  .quick-actions{ display:none !important; }   /* Report / My Complaints live in the slide menu below desktop */
   .hamburger{ display:inline-flex; margin-left:auto; order:3;
     flex-direction:column; align-items:center; justify-content:center;
     gap:4px; width:42px; height:42px; border:1px solid rgba(255,255,255,.35);
@@ -333,9 +330,8 @@ tr.row-link:hover{ background:#FBF9F3; cursor:pointer; }
   /* Nav: wrap instead of overflow, shrink brand */
   .topnav{ padding:12px 16px; }
   .topnav nav{ flex-wrap:wrap; gap:10px 14px; width:100%; justify-content:flex-start; }
-  .quick-actions{ display:none; }   /* Report / My Complaints live in the slide menu on phones */
   .brand-logo{ width:34px; height:34px; }
-  .govt-brand .brand strong{ font-size:1rem; }
+  .govt-brand .brand strong{ font-size:1.05rem; }
   .who{ font-size:.76rem; padding:4px 10px; }
   .lang-switch select{ max-width:none; flex:1 1 auto; }
 
@@ -415,3 +411,22 @@ tr.row-link:hover{ background:#FBF9F3; cursor:pointer; }
   .hero-title{ font-size:2rem; }
   .how{ padding:26px 20px; }
 }
+
+/* Citizen home: own reported problems */
+.my-reports{ margin-bottom:44px; }
+.my-reports .id{ font-size:.72rem; color:var(--ink-faint); letter-spacing:.03em; }
+a.problem-card{ text-decoration:none; color:inherit; display:block; transition:border-color .2s, box-shadow .2s; }
+a.problem-card:hover{ border-color:var(--sal); box-shadow:var(--shadow); }
+a.problem-card h3{ color:var(--forest-deep); }
+.report-card .thumb img{ display:block; width:100%; height:160px; object-fit:cover; background:#EFEAD9; }
+
+/* Empty state: bulletproof centered stack */
+.empty-state{ display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px; text-align:center; padding:56px 24px; }
+.empty-state p{ margin:0; font-size:1rem; color:var(--ink-soft); max-width:32rem; }
+
+/* Public resolved gallery: before/after pairs, no reporter info */
+.gallery{ margin:44px 0 8px; }
+.before-after{ display:grid; grid-template-columns:1fr 1fr; }
+.before-after img{ display:block; width:100%; height:170px; object-fit:cover; background:#EFEAD9; }
+.before-after .cap{ display:block; font-size:.72rem; color:var(--ink-soft); padding:6px 12px; border-top:1px solid var(--line); background:#FBFAF5; }
+.problem-body .meta{ font-size:.8rem; color:var(--ink-soft); }

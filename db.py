@@ -382,6 +382,16 @@ def list_by_citizen(conn, citizen_id):
     return [hydrate_complaint(conn, r, with_relations=True) for r in rows]
 
 
+def list_recent_resolved(conn, limit=6):
+    """Latest resolved complaints for the public gallery. Caller must not
+    render reporter identity — anonymity is enforced in the template."""
+    rows = conn.execute(
+        "SELECT * FROM complaints WHERE status='Resolved' ORDER BY resolved_at DESC LIMIT ?",
+        (limit,),
+    ).fetchall()
+    return [hydrate_complaint(conn, r, with_relations=False) for r in rows]
+
+
 def list_queue(conn):
     rows = conn.execute(
         "SELECT * FROM complaints WHERE status IN ('Pending Officer Review','AI Verified') ORDER BY created_at ASC"

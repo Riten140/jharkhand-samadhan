@@ -5,16 +5,6 @@
 
 <div class="topbar"><h1>{{ t('account_title') }}</h1></div>
 
-<div class="card" style="margin-bottom:18px; display:flex; align-items:center; gap:14px; flex-wrap:wrap; justify-content:space-between;">
-  <div style="flex:1 1 220px;">
-    <div class="id">{{ t('otp_verify_title') }}</div>
-    <p class="hint" style="margin:6px 0 0;">{{ t('otp_account_hint') }}</p>
-  </div>
-  <form method="POST" action="{{ url_for('account_send_otp') }}">
-    <button type="submit" class="btn btn-forest btn-sm">{{ t('send_otp') }}</button>
-  </form>
-</div>
-
 <form method="POST" enctype="multipart/form-data">
 <div class="grid grid-2" style="gap:22px;">
   <div class="card">
@@ -60,10 +50,6 @@
 
     <label for="home_address">{{ t('home_address') }}</label>
     <textarea id="home_address" name="home_address" rows="3">{{ current_user.home_address or '' }}</textarea>
-
-    <label for="otp">{{ t('otp_label') }}</label>
-    <input type="text" id="otp" name="otp" inputmode="numeric" autocomplete="one-time-code"
-           pattern="[0-9]{6}" maxlength="6" placeholder="••••••" required>
 
     <div style="margin-top:18px;">
       <button type="submit" class="btn btn-primary btn-block">{{ t('btn_save_changes') }}</button>
